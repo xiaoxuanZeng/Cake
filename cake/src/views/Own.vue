@@ -24,7 +24,7 @@
         <a href="javascript:;" class="leclub">LECLUB</a>
         <a href="javascript:;" class="online">在线客服</a>
         <a href="javascript:;" class="ticket">我的发票</a>
-        <a href="javascript:;" class="our">关于我们的</a>
+        <a href="javascript:;" class="our">关于我们得的</a>
       </div>
     </div>
   </div>
