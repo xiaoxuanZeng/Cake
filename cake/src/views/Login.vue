@@ -1,6 +1,8 @@
 <template>
   <div>
     <h1>登陆和注册</h1>
+    <mt-file :placeholder="请输入"></mt-file>
+    <mt-file></mt-file>
   </div>
 </template>
 <script>
