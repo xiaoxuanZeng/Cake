@@ -66,6 +66,54 @@ CREATE TABLE cake_pic(
   pic VARCHAR(128)                                         #图片
 );
 
+INSERT INTO cake_pic VALUES(NULL,60,"images/product/64sd78f5465sda4153.jpg");
+INSERT INTO cake_pic VALUES(NULL,61,"images/product/64sd78f5465sda4154.jpg");
+INSERT INTO cake_pic VALUES(NULL,62,"images/product/64sd78f5465sda4155.jpg");
+INSERT INTO cake_pic VALUES(NULL,63,"images/product/64sd78f5465sda4156.jpg");
+INSERT INTO cake_pic VALUES(NULL,64,"images/product/64sd78f5465sda4157.jpg");
+INSERT INTO cake_pic VALUES(NULL,65,"images/product/64sd78f5465sda4158.jpg");
+INSERT INTO cake_pic VALUES(NULL,66,"images/product/64sd78f5465sda4159.jpg");
+INSERT INTO cake_pic VALUES(NULL,67,"images/product/64sd78f5465sda416.jpg");
+INSERT INTO cake_pic VALUES(NULL,68,"images/product/64sd78f5465sda416.png");
+INSERT INTO cake_pic VALUES(NULL,69,"images/product/64sd78f5465sda4160.jpg");
+INSERT INTO cake_pic VALUES(NULL,70,"images/product/64sd78f5465sda4161.jpg");
+INSERT INTO cake_pic VALUES(NULL,71,"images/product/64sd78f5465sda4162.jpg");
+INSERT INTO cake_pic VALUES(NULL,72,"images/product/64sd78f5465sda4163.jpg");
+INSERT INTO cake_pic VALUES(NULL,73,"images/product/64sd78f5465sda4164.jpg");
+INSERT INTO cake_pic VALUES(NULL,74,"images/product/64sd78f5465sda4165.jpg");
+INSERT INTO cake_pic VALUES(NULL,75,"images/product/64sd78f5465sda4166.jpg");
+INSERT INTO cake_pic VALUES(NULL,76,"images/product/64sd78f5465sda4167.jpg");
+INSERT INTO cake_pic VALUES(NULL,77,"images/product/64sd78f5465sda4168.jpg");
+INSERT INTO cake_pic VALUES(NULL,78,"images/product/64sd78f5465sda4169.jpg");
+INSERT INTO cake_pic VALUES(NULL,79,"images/product/64sd78f5465sda417.jpg");
+INSERT INTO cake_pic VALUES(NULL,80,"images/product/64sd78f5465sda4170.jpg");
+INSERT INTO cake_pic VALUES(NULL,81,"images/product/64sd78f5465sda4171.jpg");
+INSERT INTO cake_pic VALUES(NULL,82,"images/product/64sd78f5465sda4172.jpg");
+INSERT INTO cake_pic VALUES(NULL,83,"images/product/64sd78f5465sda4173.jpg");
+INSERT INTO cake_pic VALUES(NULL,84,"images/product/64sd78f5465sda4174.jpg");
+INSERT INTO cake_pic VALUES(NULL,85,"images/product/64sd78f5465sda4175.jpg");
+INSERT INTO cake_pic VALUES(NULL,86,"images/product/64sd78f5465sda4176.jpg");
+INSERT INTO cake_pic VALUES(NULL,87,"images/product/64sd78f5465sda4177.jpg");
+INSERT INTO cake_pic VALUES(NULL,88,"images/product/64sd78f5465sda4178.jpg");
+INSERT INTO cake_pic VALUES(NULL,89,"images/product/64sd78f5465sda4179.jpg");
+INSERT INTO cake_pic VALUES(NULL,90,"images/product/64sd78f5465sda418.jpg");
+INSERT INTO cake_pic VALUES(NULL,91,"images/product/64sd78f5465sda4181.jpg");
+INSERT INTO cake_pic VALUES(NULL,92,"images/product/64sd78f5465sda4182.jpg");
+INSERT INTO cake_pic VALUES(NULL,93,"images/product/64sd78f5465sda4183.jpg");
+INSERT INTO cake_pic VALUES(NULL,94,"images/product/64sd78f5465sda4184.jpg");
+INSERT INTO cake_pic VALUES(NULL,95,"images/product/64sd78f5465sda4185.jpg");
+INSERT INTO cake_pic VALUES(NULL,96,"images/product/64sd78f5465sda4186.jpg");
+INSERT INTO cake_pic VALUES(NULL,97,"images/product/64sd78f5465sda4187.jpg");
+INSERT INTO cake_pic VALUES(NULL,98,"images/product/64sd78f5465sda4188.jpg");
+INSERT INTO cake_pic VALUES(NULL,99,"images/product/64sd78f5465sda4189.jpg");
+INSERT INTO cake_pic VALUES(NULL,100,"images/product/64sd78f5465sda419.jpg");
+INSERT INTO cake_pic VALUES(NULL,101,"images/product/64sd78f5465sda4190.jpg");
+INSERT INTO cake_pic VALUES(NULL,102,"images/product/64sd78f5465sda4191.jpg");
+INSERT INTO cake_pic VALUES(NULL,103,"images/product/64sd78f5465sda4192.jpg");
+INSERT INTO cake_pic VALUES(NULL,104,"images/product/64sd78f5465sda4193.jpg");
+INSERT INTO cake_pic VALUES(NULL,105,"images/product/64sd78f5465sda4198.jpg");
+
+
 /** 购物车表 **/
 CREATE TABLE cake_cart(
   cid INT PRIMARY KEY AUTO_INCREMENT,
