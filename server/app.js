@@ -1,4 +1,3 @@
-
 // 引入express模块
 const express = require("express");
 // 引入body-parser中间件
@@ -14,6 +13,8 @@ const indexRouter = require("./routes/index");
 const loginRouter = require("./routes/user");
 // 导入details路由器 商品
 const detailsRouter = require("./routes/details");
+// 导入cart路由器 购物车
+const cartRouter = require("./routes/cart");
 
 // 创建服务器
 var server = express();
@@ -24,7 +25,7 @@ server.listen(7700);
 // 使用cors中间件 解决跨域
 server.use(cors({
   origin: ["http://localhost:7000", "http://127.0.0.1:5500", "http://127.0.0.1:7000"],
-  credentials:true
+  credentials :true
 }));
 
 
@@ -51,3 +52,5 @@ server.use("/index", indexRouter);
 server.use("/user", loginRouter);
 
 server.use("/product", detailsRouter);
+
+server.use("/cart", cartRouter);
