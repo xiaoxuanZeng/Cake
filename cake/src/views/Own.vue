@@ -1,11 +1,22 @@
 <template>
   <div class="total">
-    <div class="not_login">
+    <!-- 未登录状态下 -->
+    <div class="not_login"  v-if="uphone!=''">
       <div class="logo">
         <img src="../../public/images/avatar.png" alt />
       </div>
       <mt-button class="myButton">登录</mt-button>
     </div>
+    <!-- 登录状态下 -->
+    <div class="is_login"  v-if="uphone==''">
+      <div class="avatar_wrap">
+        <router-link to="#" class="logo">
+        <img src="../../public/images/avatar.png" alt />
+        </router-link>
+      </div>
+      <div class="info"><span>12345</span></div>
+    </div>
+
     <div class="order">
       <div class="own">
         <p class="section_title">我的订单</p>
@@ -32,7 +43,19 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      uphone:""
+    };
+  },
+  created(){
+    var uid=sessionStorage.getItem("uid");
+    console.log(uid)
+    if(uid){
+      this.axios.get("/user/own",{params:{uid}}).then(result=>{
+        console.log(result)
+        this.uphone=result.data.data[0].uname
+      })
+    }
   }
 };
 </script>
@@ -138,5 +161,16 @@ export default {
 }
 .own a.our:before{
   background-position:-1.3rem -2.4rem;
+}
+.is_login{
+  overflow: hidden;
+  clear: both;
+  margin-top: 20px;
+  margin-left: 20px;
+  }
+.avatar_wrap{float: left}
+.avatar_wrap .info{
+  float: left;
+  vertical-align: middle
 }
 </style>

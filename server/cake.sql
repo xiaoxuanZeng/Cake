@@ -10,7 +10,10 @@ CREATE TABLE cake_user(
   phone VARCHAR(16),                                          #手机号(登陆的账号)
   upwd VARCHAR(32),                                           #登陆密码
   avatar VARCHAR(128) DEFAULT "默认一张登陆后的头像",           #头像
-  integral INT DEFAULT 0                                      #积分(默认开始为0)
+  integral INT DEFAULT 0,                                     #积分(默认开始为0)
+  merchant_name VARCHAR(32),                                  #真实姓名
+  gender INT,                                                 #性别  0-女  1-男
+  birth DATE                                                  #生日
 );
 
 /** 商家用户表 **/

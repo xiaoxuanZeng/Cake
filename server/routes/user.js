@@ -75,16 +75,17 @@ router.post("/login", (req, res) => {
 // 个人中心 /own
 router.get("/own",(req,res)=>{
     var uid=req.query.uid
-    var sql = "SELECT uname,phone FROM cake_user WHERE uid=?";
-    pool.query(sql, [phone, upwd], (err, result) => {
+    if(!uid){
+      res.send({ code: 400, msg: "未登录,请先登录" });
+    }
+    var sql = "SELECT uname,phone,avatar,merchant_name,gender,birth FROM cake_user WHERE uid=?";
+    pool.query(sql, [uid], (err, result) => {
     if (err) throw err;
     if (result.length > 0) {
-      // session 的登陆id
-      req.session.uid = result.uid;
-      console.log(req.session.uid)
-      res.send({ code: 200, data: result });
+      // console.log(req.session.uid)
+      res.send({ code: 200, data: result[0] });
     } else {
-      res.send({ code: 400, msg: "用户名或密码错误" });
+      res.send({ code: 400, msg: "没有该用户" });
     }
   })
 })
