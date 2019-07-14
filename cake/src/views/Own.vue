@@ -1,20 +1,23 @@
 <template>
   <div class="total">
     <!-- 未登录状态下 -->
-    <div class="not_login"  v-if="uphone!=''">
+    <div class="not_login" v-if="uphone==''">
       <div class="logo">
         <img src="../../public/images/avatar.png" alt />
       </div>
-      <mt-button class="myButton">登录</mt-button>
+      <mt-button class="myButton" @click="login">登录</mt-button>
     </div>
     <!-- 登录状态下 -->
-    <div class="is_login"  v-if="uphone==''">
+    <div class="is_login" v-if="uphone!=''">
       <div class="avatar_wrap">
-        <router-link to="#" class="logo">
-        <img src="../../public/images/avatar.png" alt />
+        <router-link to="Infornation" class="logo">
+          <img src="../../public/images/avatar.png" alt />
         </router-link>
       </div>
-      <div class="info"><span>12345</span></div>
+      <div class="info">
+        <span class="phone" v-text="uphone"></span>
+        <i class="iconfont logout" @click="logout">&#xe799;</i>
+      </div>
     </div>
 
     <div class="order">
@@ -44,23 +47,31 @@
 export default {
   data() {
     return {
-      uphone:""
+      uphone: ""
     };
   },
-  created(){
-    var uid=sessionStorage.getItem("uid");
-    console.log(uid)
-    if(uid){
-      this.axios.get("/user/own",{params:{uid}}).then(result=>{
-        console.log(result)
-        this.uphone=result.data.data[0].uname
-      })
+  created() {
+    var uid = sessionStorage.getItem("uid");
+    if (uid) {
+      this.axios.post("/user/own", `uid=${uid}`).then(result => {
+        this.uphone = result.data.data[0].phone;
+      });
     }
+  },
+  methods: {
+    login() {
+      // 跳转到登陆页
+      this.$router.push("/Login");
+    },
+    // 退出登录
+   
   }
 };
 </script>
 <style scoped>
-.total{background: #f5f5f5}
+.total {
+  background: #f5f5f5;
+}
 .not_login {
   text-align: center;
   background: #fff;
@@ -83,12 +94,12 @@ export default {
 }
 .order {
   font: 13px "Hiragino Sans GB", STFangsong, "Microsoft YaHei", Helvetica,
-  STXihei, Arial, serif !important;
+    STXihei, Arial, serif !important;
   background: #fff;
 }
-.service{
+.service {
   font: 13px "Hiragino Sans GB", STFangsong, "Microsoft YaHei", Helvetica,
-  STXihei, Arial, serif !important;
+    STXihei, Arial, serif !important;
   background: #fff;
 }
 .section_title {
@@ -138,39 +149,52 @@ export default {
   background-position: -3.6rem -0.08rem;
 }
 .own a.birth:before {
-  background-position:-5.16rem -0.08rem
+  background-position: -5.16rem -0.08rem;
 }
-.own a.detail:before{
-  background-position:-2.5rem,4.1rem;
+.own a.detail:before {
+  background-position: -2.5rem, 4.1rem;
 }
-.own a.card:before{
-  background-position:-0.12rem -1.23rem;
+.own a.card:before {
+  background-position: -0.12rem -1.23rem;
 }
 
-.own a.our:before{
-  background-position:-1rem,0rem;
+.own a.our:before {
+  background-position: -1rem, 0rem;
 }
-.own a.leclub:before{
-  background-position:-1.32rem -1.24rem;
+.own a.leclub:before {
+  background-position: -1.32rem -1.24rem;
 }
-.own a.online:before{
-  background-position:-3.9rem -1.24rem;
+.own a.online:before {
+  background-position: -3.9rem -1.24rem;
 }
-.own a.ticket:before{
-  background-position:-4.9rem -1.24rem;
+.own a.ticket:before {
+  background-position: -4.9rem -1.24rem;
 }
-.own a.our:before{
-  background-position:-1.3rem -2.4rem;
+.own a.our:before {
+  background-position: -1.3rem -2.4rem;
 }
-.is_login{
+.is_login {
   overflow: hidden;
   clear: both;
   margin-top: 20px;
   margin-left: 20px;
-  }
-.avatar_wrap{float: left}
-.avatar_wrap .info{
+}
+.avatar_wrap {
   float: left;
-  vertical-align: middle
+}
+.info {
+  float: left;
+  width: 75%;
+  position: relative;
+  margin-top: 15px;
+  margin-left: 10px;
+}
+.info .phone {
+  font-size: 14px;
+}
+.info .logout{
+  position: absolute;
+  right: 6px;
+  top: 50%;
 }
 </style>

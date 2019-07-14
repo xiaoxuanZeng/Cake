@@ -65,13 +65,14 @@ export default {
         this.axios
           .post("/user/reg", "phone=" + this.phone + "&upwd=" + this.password)
           .then(result => {
-            // console.log(result);
+            console.log(result);
             this.$toast(result.data.msg);
-            if(result.data.code==200){
+            if (result.data.code == 200) {
               // 3秒后跳转登录页
-              setTimeout(()=>{
-                this.selected="2"
-              },3000)
+              setTimeout(() => {
+                this.selected = "2";
+                this.password = "";
+              }, 3000);
             }
           });
       }
@@ -157,14 +158,17 @@ export default {
       if (reg2.test(password) == false) {
         this.$toast("8~16位,数字、字母、字符至少包含两种");
         return;
-      }else{
-        this.axios.post("/user/login","phone="+this.phone+"&upwd="+this.password).then(result=>{
-          var uid=result.data.data[0].uid
-          if(result.data.code==200){
-           sessionStorage.setItem("uid",uid)
-            // 跳转主页
-          }
-        })
+      } else {
+        this.axios
+          .post("/user/login", "phone=" + this.phone + "&upwd=" + this.password)
+          .then(result => {
+            var uid = result.data.data[0].uid;
+            if (result.data.code == 200) {
+              sessionStorage.setItem("uid", uid);
+              // 跳转主页
+              this.$router.push("/Index");
+            }
+          });
       }
     }
   },
