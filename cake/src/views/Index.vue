@@ -74,15 +74,15 @@
             <!-- 小食 -->
             <div class="snack-list clearfix">
               <span class="snack-title">小食</span>
-              <router-link to="###" class="product-more">更多</router-link>
+              <router-link to="###" class="product-more">更多&gt;</router-link>
             </div>
-            <div class="snack-list clearfix">
-              <ul>
+            <div class="snack-list clearfix" style="margin-bottom: 15px;">
+              <ul class="mylist">
                 <li class="snack-item" v-for="(item,i) of product_list" :key="i">
                   <router-link :to="`/Details/${item.pid}`">
                     <img :src="`http://127.0.0.1:7700/${item.pic}`" alt />
                     <span class="title" v-text="item.pname"></span>
-                    <span class="price" v-text="item.price"></span>
+                    <span class="price" v-text="`￥${item.price}`"></span>
                   </router-link>
                 </li>
               </ul>
@@ -141,7 +141,11 @@ export default {
       product_list: []
     };
   },
+  // props: ["old_active"],
   created() {
+    // 有其他页面返回到首页时,去到特定的页面
+    // if(this)
+    // console.log(this.old_active);
     // 屏幕可用区域变化时执行 (分类的高度需要与屏幕高度一样)
     this.resizeHeight = screen.availHeight;
     window.addEventListener("resize", () => {
@@ -151,7 +155,7 @@ export default {
     // 获取后台数据显示 需要传入某系列的cid
     var cid = 7;
     this.axios.get("/index/index", { params: { cid: cid } }).then(result => {
-      console.log(result.data.data);
+      // console.log(result.data.data);
       var list = result.data.data;
       this.carousel_list = list.carousel;
       this.product_list = list.product;
@@ -260,10 +264,23 @@ img {
   box-sizing: border-box;
   letter-spacing: 1px;
 }
+/* 弹性布局 首页商品 */
+.mylist {
+  display: flex;
+  /* 换行 */
+  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 100%;
+}
+.mylist > li {
+  width: 33.3%;
+  margin-bottom: 3px;
+}
 /* 图片 */
 .snack-item img {
-  width: 110px;
-  height: 110px;
+  /* width: 100%; */
+  width: 116px;
+  height: 116px;
 }
 .snack-list .snack-title {
   float: left;
@@ -278,8 +295,8 @@ img {
   font-size: 0.45rem;
 }
 .snack-list .snack-item {
-  float: left;
-  width: 33.3%;
+  /* float: left;
+  width: 33.3%; */
   text-align: left;
 }
 .snack-item span {
@@ -290,7 +307,9 @@ img {
   display: block;
 }
 .snack-item .title {
+  display: inline-block;
   color: #333;
+  height: 32px;
 }
 .snack-item .price {
   color: crimson;

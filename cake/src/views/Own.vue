@@ -64,7 +64,10 @@ export default {
       this.$router.push("/Login");
     },
     // 退出登录
-   
+    logout() {
+      sessionStorage.clear("uid");
+      this.uphone = "";
+    }
   }
 };
 </script>
@@ -135,7 +138,6 @@ export default {
   margin-left: -0.4rem;
   top: 0.24rem;
 }
-
 .own a:nth-of-type(1):before {
   background-position: -0.26rem -0.08rem;
 }
@@ -157,7 +159,6 @@ export default {
 .own a.card:before {
   background-position: -0.12rem -1.23rem;
 }
-
 .own a.our:before {
   background-position: -1rem, 0rem;
 }
@@ -192,7 +193,7 @@ export default {
 .info .phone {
   font-size: 14px;
 }
-.info .logout{
+.info .logout {
   position: absolute;
   right: 6px;
   top: 50%;

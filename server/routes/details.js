@@ -27,25 +27,59 @@ router.get("/details", (req, res) => {
     spec: []
   };
 
-  // 获取商品详情的信息
-  var sql = `SELECT cake_product.pid,pname,price,pic,sales_volume,read_num,
-              details_pic FROM cake_product INNER JOIN cake_pic ON 
-              cake_product.pid=? AND cake_pic.pid=?`;
-  pool.query(sql, [pid, pid], (err, result) => {
-    if (err) throw err;
-    output.product = result;
+  if (!pid) {
+    res.send({ code: 400, msg: "没有该商品" });
+    return;
+  }
 
-    // 获取商品规格的信息
-    var sql = `SELECT sid,size,cake_spec.price,is_state,style,fruit,else_message,
-                repertory FROM cake_product INNER JOIN cake_spec ON 
-                cake_product.pid=? AND cake_spec.pid=?`;
-    pool.query(sql, [pid, pid], (err, result) => {
+  // 进入了这个商品的详情 浏览量加1
+  var sql = "SELECT read_num FROM cake_product WHERE pid=?";
+  pool.query(sql, [pid], (err, result) => {
+    if (err) throw err;
+    // 先查询出原先的浏览量
+    var read_num = parseInt(result[0].read_num);
+    // 修改浏览量加1
+    var sql2 = "UPDATE cake_product SET read_num=? WHERE pid=?";
+    pool.query(sql2, [read_num + 1, pid], (err, result) => {
       if (err) throw err;
-      output.spec = result;
-      res.send({ code: 200, data: output });
+      // 修改成功后返回商品信息
+      if (result.affectedRows > 0) {
+        // 获取商品详情的信息
+        var sql = `SELECT cake_product.pid,pname,price,pic,sales_volume,
+                    read_num,details_pic FROM cake_product INNER JOIN 
+                    cake_pic ON cake_product.pid=? AND cake_pic.pid=?`;
+        pool.query(sql, [pid, pid], (err, result) => {
+          if (err) throw err;
+          output.product = result;
+
+          // 获取商品规格的信息
+          var sql = `SELECT sid,size,cake_spec.price,is_state,style,fruit,
+                      else_message,repertory FROM cake_product INNER JOIN 
+                      cake_spec ON cake_product.pid=? AND cake_spec.pid=?`;
+          pool.query(sql, [pid, pid], (err, result) => {
+            if (err) throw err;
+            output.spec = result;
+            res.send({ code: 200, data: output });
+          })
+        });
+      }
     })
+  });
+});
+
+// 热门搜索的数据展示为浏览量高的商品
+// 预览量大于100的取前十条数据到热门搜索进行展示
+router.get("/search",(req,res)=>{
+  var sql=`SELECT * FROM cake_product WHERE read_num>100 order by read_num desc limit 0,10`;
+  pool.query(sql,[],(err,result)=>{
+    if(err) throw err;
+    console.log(result)
+    res.send(result)
   })
 })
+
+
+
 
 
 

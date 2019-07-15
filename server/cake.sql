@@ -11,7 +11,7 @@ CREATE TABLE cake_user(
   upwd VARCHAR(32),                                           #登陆密码
   avatar VARCHAR(128) DEFAULT "默认一张登陆后的头像",           #头像
   real_name VARCHAR(50),                                      #真实姓名
-  birthday DATE,                                              #生日日期
+  birthday VARCHAR(32),                                       #生日日期
   integral INT DEFAULT 0,                                     #积分(默认开始为0)
   gender INT                                                  #性别  0-女  1-男
 );
@@ -55,8 +55,8 @@ CREATE TABLE cake_spec(
   sid INT PRIMARY KEY AUTO_INCREMENT,
   pid INT,                                                 #商品的id
   size VARCHAR(16),                                        #尺寸
-  price DECIMAL(10,2),                                       #价格
-  is_state VARCHAR(3),                                        #状态(预定:0,现货:1) -1:没有状态
+  price DECIMAL(10,2),                                     #价格
+  is_state VARCHAR(3),                                     #状态(预定:0,现货:1) -1:没有状态
   style VARCHAR(32),                                       #商品款式
   fruit VARCHAR(32),                                       #水果
   else_message VARCHAR(36),                                #其他的信息(其他无法归类的)
@@ -67,8 +67,8 @@ CREATE TABLE cake_spec(
 CREATE TABLE cake_pic(
   iid INT PRIMARY KEY AUTO_INCREMENT,
   pid INT,                                                 #商品的id
-  pic VARCHAR(128)                                         #图片
-);
+  details_pic VARCHAR(128)                                 #图片
+); 
 
 /** 购物车表 **/
 CREATE TABLE cake_cart(
@@ -219,7 +219,7 @@ INSERT INTO cake_product VALUE
 
 /*商品规格*/
 INSERT INTO cake_spec value
-(NULL,1,"4寸",108,-1,NULL,"芒果",NULL,97), 
+(NULL,1,"4寸",198,-1,NULL,"芒果",NULL,97), 
 (NULL,1,"5寸",139,-1,NULL,"芒果",NULL,97), 
 (NULL,1,"6寸",188,-1,NULL,"芒果",NULL,97),
 (NULL,1,"8寸",268,-1,NULL,"芒果",NULL,97),

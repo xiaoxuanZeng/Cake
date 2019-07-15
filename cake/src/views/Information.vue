@@ -11,14 +11,12 @@
       <div class="same_style">
         <span class="item_info" v-text="`手机号:${phone}`"></span>
       </div>
-       <div class="same_style">
-        <span class="item_info" v-text="`真实姓名:${real_name}`"></span>
-      </div>
+        <mt-field label="真实姓名:" v-model="real_name"></mt-field>
       <div class="sex_info">
         性别:
         <label for="male">
           男
-          <input type="radio" name="sex" id="male"/>
+          <input type="radio" name="sex" id="male" />
         </label>
         <label for="female">
           女
@@ -32,47 +30,52 @@
         <i class="iconfont gray">&#xe731;</i>
       </div>
     </div>
+    <mt-button class="save" @click="save">保存</mt-button>
   </div>
 </template>
 <script>
 export default {
-   data(){
-      return{
-       birth:"请选择生日", //页面显示的日期
-       phone:"",
-       real_name:"",
-       gender:"",
-       birthday:"",  //日期组件选中的值
-      }
-   },
-   created(){
-      var uid=sessionStorage.getItem("uid")
-      if(uid){
-      this.axios.post("/user/own",`uid=${uid}`).then(result=>{
-         console.log(result)
-         this.phone=result.data.data[0].phone;
-         this.real_name=result.data.data[0].real_name;
-         this.real_name=this.real_name==null?"":this.real_name;
-         this.gender=result.data.data[0].gender;
-         if (this.gender == 1) {
-              female.checked = true;
-            } else if (this.gender == 0) {
-              male.checked = true;
-            }
-         this.birth=(result.data.data[0].birthday)
-         this.birth=this.birth.split("T")[0]
-         this.birthday=this.birth
-         var year=this.birth.split("-")[0]
-         var month=this.birth.split("-")[1]
-         var day=this.birth.split("-")[2]
-         this.birth=`${year}年${month}月${day}日`
-      })
-      }
-   },
+  // 返回上一级 是回到个人中心页
+  // props:{
+  //   old_active: "me"
+  // },
+  data() {
+    return {
+      birth: "请选择生日", //页面显示的日期
+      phone: "",
+      real_name: "",
+      gender: "",
+      birthday: "" //日期组件选中的值
+    };
+  },
+  created() {
+    // 获取该用户的个人信息
+    var uid = sessionStorage.getItem("uid");
+    if (uid) {
+      this.axios.post("/user/own", `uid=${uid}`).then(result => {
+        console.log(result);
+        this.phone = result.data.data[0].phone;
+        this.real_name = result.data.data[0].real_name;
+        this.real_name = this.real_name == null ? "" : this.real_name;
+        this.gender = result.data.data[0].gender;
+        if (this.gender == 1) {
+          male.checked = true;
+        } else if (this.gender == 0) {
+          female.checked = true;
+        }
+        this.birth = result.data.data[0].birthday;
+        if (this.birth) {
+          this.birthday = this.birth;
+        } else {
+          this.birth = "请选择生日";
+        }
+      });
+    }
+  },
   methods: {
-     jump(){
-        this.$router.go(-1)
-     },
+    jump() {
+      this.$router.go(-1);
+    },
     showFormatPicker() {
       if (!this.formatPicker) {
         this.formatPicker = this.$createDatePicker({
@@ -89,14 +92,26 @@ export default {
           onCancel: this.cancelHandle
         });
       }
-
       this.formatPicker.show();
     },
     selectHandle(date, selectedVal, selectedText) {
-      this.birth=`${selectedVal[0]}年${selectedVal[1]}月${selectedVal[2]}日`;
+      this.birth = `${selectedVal[0]}年${selectedVal[1]}月${selectedVal[2]}日`;
     },
-  },
-
+    //存入用户修改的个人信息
+    save() {
+      var uid = sessionStorage.getItem("uid");
+      if(female.checked==true){
+        this.gender=0
+      }else if(male.checked==true){
+        this.gender=1
+      }
+      this.birth2=this.birth.replace(/[\u4e00-\u9fa5]/g,"-");
+      this.birth2 = this.birth.split("T")[0];
+      this.axios.post("/user/set", `uid=${uid}&real_name=${this.real_name}&gender=${this.gender}&birthday=${this.birth2}`).then(result => {
+        console.log(result);
+      });
+    }
+  }
 };
 </script>
 <style>
@@ -138,7 +153,6 @@ export default {
 }
 .same_style {
   overflow: hidden;
-  border-bottom: 1px solid #e0dcd1;
   padding: 0.12rem 0.1rem 0.12rem 0;
 }
 .same_style span {
@@ -158,20 +172,34 @@ export default {
   font-size: 14px;
   color: #9c9c9c;
 }
-.selectBirth{
-   position: relative;
+.selectBirth {
+  position: relative;
 }
-.selectBirth .pl{
-   padding-right: 50px;
+.selectBirth .pl {
+  padding-right: 50px;
 }
-.selectBirth i{
-   font-size: 23px;
-   position: absolute;
-   top: 2px;
+.selectBirth i {
+  font-size: 23px;
+  position: absolute;
+  top: 2px;
 }
-.mint-field-core::input-placeholder{
-   color: #9c9c9c;
+.mint-field-core::input-placeholder {
+  color: #9c9c9c;
+}
+
+.all_font .save {
+  background: #ff4001;
+  width: 60%;
+  height: 40px;
+  line-height: 40px;
+  position: absolute;
+  left: 50%;
+  margin-left: -2.6rem;
+  margin-top: 30px;
+  color: #fff;
+  font-size: 12px;
+}
+.mint-field .mint-cell-title{
+  width: 1.8rem !important
 }
 </style>
-
-

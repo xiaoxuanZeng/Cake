@@ -1,5 +1,9 @@
 <template>
   <div class="page-navbar">
+    <p class="return_text" @click="$router.push('/Own')">
+      <i class="iconfont return">&#xe732;</i>
+      <!-- <span>返回</span> -->
+    </p>
     <mt-navbar class="page-part" v-model="selected">
       <mt-tab-item id="1">注册</mt-tab-item>
       <mt-tab-item id="2">登录</mt-tab-item>
@@ -25,7 +29,7 @@
 export default {
   data() {
     return {
-      selected: "1",
+      selected: "2",
       phone: "",
       checkCode: "获取验证码",
       code: "",
@@ -162,8 +166,9 @@ export default {
         this.axios
           .post("/user/login", "phone=" + this.phone + "&upwd=" + this.password)
           .then(result => {
-            var uid = result.data.data[0].uid;
+            // console.log(result.data);
             if (result.data.code == 200) {
+              var uid = result.data.data[0].uid;
               sessionStorage.setItem("uid", uid);
               // 跳转主页
               this.$router.push("/Index");
@@ -179,6 +184,12 @@ export default {
         this.checkCode = "获取验证码";
         this.code = "";
       }
+    },
+    selected() {
+      this.phone = "";
+      this.checkCode = "获取验证码";
+      this.code = "";
+      this.password = "";
     }
   }
 };
@@ -214,5 +225,15 @@ export default {
   position: absolute;
   left: 0;
   top: 50%;
+}
+.iconfont.return {
+  font-size: 25px;
+  margin-left: 20px;
+  margin-top: 20px;
+  vertical-align:bottom
+}
+ .return_text span {
+  font-size: 18px;
+  vertical-align:middle
 }
 </style>

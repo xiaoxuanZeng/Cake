@@ -7,6 +7,8 @@ import Cart from './views/Cart'
 import Own from './views/Own'
 import Login from './views/Login'
 import Information from './views/Information'
+import Close from './views/Close.vue'
+import Search from './views/Search'
 
 Vue.use(Router)
 
@@ -41,6 +43,17 @@ export default new Router({
       path: '/Login',
       component: Login
     },
-    {path:'/Infornation',component:Information},
+    {
+      path: '/Infornation',
+      component: Information
+    },
+    {
+      path: '/Close',
+      component: Close
+    },
+    {
+      path:'/Search',
+      component:Search
+    },
   ]
 })

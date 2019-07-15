@@ -1,7 +1,8 @@
 <template>
   <div class="cart">
+    <h1 class="title">购物车</h1>
     <div class="cart_box" v-for="(item,index) of list" :key="index">
-      <!-- <h1 class="title">购物车</h1> -->
+      
       <label for="input" @click="Selected">
         <input type="checkbox" class="input" v-model="item.selected" />
         <span class="input_sp input_red" v-if="item.selected" @click="radios(index)"></span>
@@ -56,7 +57,7 @@
 export default {
   data() {
     return {
-      money: 100,
+      money: 0,
       num: 0,
       list: [],
       // 全选
@@ -69,7 +70,7 @@ export default {
     uid = 1;
     if (uid != undefined) {
       this.axios
-        .get("/cart/get_cart", { params: { user_id: 2 } })
+        .get("/cart/get_cart", { params: { user_id: 1 } })
         .then(result => {
           // console.log(result.data);
           if (result.data.code != 400) {
@@ -175,6 +176,17 @@ export default {
 <style>
 .none {
   display: none;
+}
+.title{
+  text-align: center;
+  /* display: block; */
+  color:#303030;
+  height:30px;
+  font-weight: bold;
+  background:#ffffff;
+  line-height: 30px;
+  padding:3px 0 3px 0;
+  font-size: 22px;
 }
 .cart {
   /* display: flex; */
