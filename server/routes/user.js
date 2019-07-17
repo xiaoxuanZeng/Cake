@@ -73,6 +73,24 @@ router.post("/login", (req, res) => {
   })
 });
 
+//忘记密码-修改密码
+router.post("/loseP", (req, res) => {
+  var phone = req.body.phone;
+  var upwd = req.body.upwd;
+  var sql1 = `SELECT * FROM cake_user WHERE phone=?`;
+  pool.query(sql1, [phone], (err, result) => {
+    if (err) throw err;
+    if (result.length > 0) {
+      var sql2 = `INSERT INTO cake_user VALUES(NULL,NULL,?,md5(?),DEFAULT,NULL,NULL,DEFAULT,NULL)`
+      console.log(456)
+      pool.query(sql2, [phone, upwd], (err, result) => {
+        if (err) throw err;
+        res.send(result)
+      })
+    }
+  })
+})
+
 
 // 个人中心 /own
 router.post("/own", (req, res) => {
@@ -82,6 +100,7 @@ router.post("/own", (req, res) => {
     res.send({ code: 400, msg: "没有登录,请先登录" });
     return;
   }
+
   var sql = `SELECT uname,phone,avatar,real_name,birthday,gender FROM cake_user 
   WHERE uid=?`;
   pool.query(sql, [uid], (err, result) => {
@@ -94,17 +113,17 @@ router.post("/own", (req, res) => {
       res.send({ code: 400, msg: "没有该用户存在,请先注册" });
     }
   })
-})
+});
 
 // 个人信息 /set
-router.post("/set",(req,res)=>{
-  var uid=req.session.uid;
-  var real_name=req.body.real_name;
-  var gender=req.body.gender;
-  var birthday=req.body.birthday;
-  var sql=`UPDATE cake_user SET real_name=?,gender=?,birthday=? WHERE uid=uid`
-  pool.query(sql,[real_name,gender,birthday,uid],(err,result)=>{
-    if(err) throw err;
+router.post("/set", (req, res) => {
+  var uid = req.session.uid;
+  var real_name = req.body.real_name;
+  var gender = req.body.gender;
+  var birthday = req.body.birthday;
+  var sql = `UPDATE cake_user SET real_name=?,gender=?,birthday=? WHERE uid=uid`
+  pool.query(sql, [real_name, gender, birthday, uid], (err, result) => {
+    if (err) throw err;
     console.log(result)
     res.send(result)
   })

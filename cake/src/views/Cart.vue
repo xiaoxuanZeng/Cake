@@ -2,25 +2,26 @@
   <div class="cart">
     <h1 class="title">购物车</h1>
     <div class="cart_box" v-for="(item,index) of list" :key="index">
-      
       <label for="input" @click="Selected">
         <input type="checkbox" class="input" v-model="item.selected" />
         <span class="input_sp input_red" v-if="item.selected" @click="radios(index)"></span>
         <span class="input_sp" v-if="!item.selected" @click="radios(index)"></span>
       </label>
-
-      <img class="img" src="images/1.jpg" alt />
-
+      <router-link :to="`/Details/${item.pid}`">
+        <img class="img" :src="`http://127.0.0.1:7700/${item.pic}`" alt />
+      </router-link>
       <div>
-        <span class="title_sp">
-          <span v-text="item.pname"></span>
-        </span>
+        <router-link :to="`/Details/${item.pid}`">
+          <span class="title_sp">
+            <span v-text="item.pname"></span>
+          </span>
+        </router-link>
         <span class="state">
-          <span :class="{none:item.is_state=='-1'}" v-text="`状态: ${item.is_state}`"></span>
-          <span :class="{none:item.size==null}" v-text="`尺寸: ${item.size}`"></span>
-          <span :class="{none:item.fruit==null}" v-text="`水果: ${item.fruit}`"></span>
-          <span :class="{none:item.else_message==null}" v-text="`套餐: ${item.else_message}`"></span>
-          <span :class="{none:item.style==null}" v-text="`款式: ${item.style}`"></span>
+          <span :class="{none:item.is_state=='-1'}" v-text="`状态:\n${item.is_state}`"></span>
+          <span :class="{none:item.size==null}" v-text="`尺寸:\n${item.size}`"></span>
+          <span :class="{none:item.fruit==null}" v-text="`水果:\n${item.fruit}`"></span>
+          <span :class="{none:item.else_message==null}" v-text="`套餐:\n${item.else_message}`"></span>
+          <span :class="{none:item.style==null}" v-text="`款式:\n${item.style}`"></span>
         </span>
         <span class="sprice" v-text="`¥${item.price*item.count}`"></span>
       </div>
@@ -47,7 +48,7 @@
         </span>
       </div>
       <div class="bottom_right">
-        <label class="delete">删除</label>
+        <label class="delete" @click="delCart">删除</label>
         <label class="close">结算</label>
       </div>
     </div>
@@ -61,30 +62,41 @@ export default {
       num: 0,
       list: [],
       // 全选
-      isSelectAll: false
+      isSelectAll: false,
+      // 是否为登陆状态
+      uid: ""
     };
   },
   created() {
-    // 加了判断,是否为登陆状态
-    var uid = sessionStorage.getItem("uid");
-    uid = 1;
-    if (uid != undefined) {
-      this.axios
-        .get("/cart/get_cart", { params: { user_id: 1 } })
-        .then(result => {
-          // console.log(result.data);
-          if (result.data.code != 400) {
-            for (var i of result.data.data) {
-              i.selected = false;
-            }
-            this.list = result.data.data;
-          }
-        });
-    }
-    // 需要公共的头部和尾部
-    // this.$emit("show_footer", false);
+    // 登陆状态的uid
+    console.log(sessionStorage.getItem("uid"));
+    this.uid = this.$store.getters.getUserId;
+    if (this.uid != "") this.load();
   },
   methods: {
+    // 获取购物车列表信息
+    load() {
+      // 加了判断,是否为登陆状态
+      var uid = this.uid;
+      if (uid != undefined) {
+        this.axios
+          .get("/cart/get_cart", { params: { user_id: 1 } })
+          .then(result => {
+            // console.log(result.data);
+            if (result.data.code != 400) {
+              for (var i of result.data.data) {
+                i.selected = false;
+              }
+              this.list = result.data.data;
+            } else {
+              console.log("购物车为空");
+            }
+          });
+      } else {
+        console.log("没有登录");
+      }
+    },
+    // 全选
     selectAll(e) {
       //全选按钮状态
       var cb = e.target.checked;
@@ -93,11 +105,9 @@ export default {
         item.selected = cb;
       }
     },
+    // 单选
     Selected(e) {
-      // console.log(e.target);
       for (var item of this.list) {
-        // console.log(item)
-        // console.log(item.selected);
         if (item.selected != true) {
           this.isSelectAll = false;
           return;
@@ -130,15 +140,15 @@ export default {
       var list = this.list;
       list[index].selected = !list[index].selected;
       this.hh();
-      // console.log(list[index].selected);
     },
     //添加
-    btn_add: function(index) {
+    btn_add(index) {
       var list = this.list;
       var count = list[index].count;
       count = count + 1;
       list[index].count = count;
       this.hh();
+      this.setCart(index);
     },
     //减去
     btn_minute(index) {
@@ -149,27 +159,79 @@ export default {
         list[index].count = count;
       }
       this.hh();
+      this.setCart(index);
+    },
+    // 发送axios 修改购物车列表的商品数量数据
+    setCart(index) {
+      // 是否为登陆状态
+      var uid = sessionStorage.getItem("uid");
+      if (uid != undefined) {
+        var list = this.list[index];
+        this.axios
+          .post(
+            "/cart/set_cart",
+            `user_id=${uid}&product_id=${list.pid}&sid=${list.sid}&count=${list.count}`
+          )
+          .then(result => {
+            // console.log(result);
+          });
+      }
+    },
+    // 删除购物车列表的商品信息
+    delCart() {
+      // 删除多个商品
+      // 创建变量保存空字符串
+      var str = "";
+      // 创建循环拼接字符串内容
+      for (var item of this.list) {
+        // 选中状态
+        if (item.selected) {
+          str += item.cid + ",";
+        }
+      }
+      str = str.substring(0, str.length - 1);
+      // 判断如果用户没选商品提示
+      if (str.length == 0) {
+        this.$toast("请选中商品");
+        return;
+      }
+      this.$messagebox
+        .confirm("是否确认删除选中的商品")
+        .then(action => {
+          // 发送ajax请求
+          this.axios.post("/cart/del_cart", `cids=${str}`).then(result => {
+            // console.log(result);
+            // 重新加载数据
+            this.load();
+          });
+        })
+        .catch(err => {
+          return;
+        });
     }
-
-    // selectAll(e) {
-    //   //全选按钮状态
-    //   var cb = e.target.checked;
-    // console.log(cb);
-    //   //依据状态修改列表cb
-    //   for (var item of this.list) {
-    //     item.cb = cb;
-    //   }
-    // },
-    // select() {
-    //   for (var item of this.list) {
-    //     if (item.cb != true) {
-    //       this.isSelectAll = false;
-    //       return;
-    //     } else {
-    //       this.isSelectAll = true;
-    //     }
-    //   }
-    // }
+  },
+  watch: {
+    uid() {
+      this.load();
+    }
+  },
+  activated() {
+    // keepAlive(缓存)开启时 重新刷新数据
+    console.log(456);
+    this.axios
+      .get("/cart/get_cart", { params: { user_id: 1 } })
+      .then(result => {
+        // console.log(result.data);
+        if (result.data.code != 400) {
+          for (var i of result.data.data) {
+            i.selected = false;
+          }
+          this.list = result.data.data;
+        } else {
+          console.log("购物车为空");
+        }
+      });
+    this.load();
   }
 };
 </script>
@@ -177,39 +239,34 @@ export default {
 .none {
   display: none;
 }
-.title{
-  text-align: center;
-  /* display: block; */
-  color:#303030;
-  height:30px;
-  font-weight: bold;
-  background:#ffffff;
-  line-height: 30px;
-  padding:3px 0 3px 0;
-  font-size: 22px;
-}
-.cart {
-  /* display: flex; */
+.cart .title {
   position: relative;
   width: 100%;
-  height: 600px;
-  /* justify-content: space-between; */
-  background-color: #f9f9f9;
+  top: 0;
+  text-align: center;
+  /* display: block; */
+  color: #303030;
+  height: 30px;
+  background: #ffffff;
+  line-height: 30px;
+  padding: 3px 0 3px 0;
+  font-size: 22px;
+  z-index: 9;
+  font-family: "苹方黑体";
 }
-.cart_box {
+.cart .cart_box {
   display: flex;
   /* margin-top:20px; */
   width: 100%;
   background: #fff;
-  height: 18%;
-  /* justify-content: space-between; */
-  /* align-items: center; */
+  border-bottom: 0.3px solid #5555;
+  padding-bottom: 2.5%;
 }
 .input,
 #bottom_input {
   display: none;
 }
-.input_sp {
+.cart .input_sp {
   display: block;
   width: 20px;
   height: 20px;
@@ -217,44 +274,45 @@ export default {
   border-radius: 50%;
   margin: 45px 8px 0 8px;
 }
-.input_red {
+.cart .input_red {
   background: #f00;
 }
-.img {
+.cart .img {
   width: 100px;
   margin-top: 10px;
   margin-right: 10px;
   height: 90px;
 }
-.title_sp {
+.cart .title_sp {
   display: block;
   font-size: 16px;
   color: #7b7b7b;
   margin-top: 14px;
+  width: 200px;
 }
-.state {
+.cart .state {
   display: block;
   font-size: 14px;
   color: #adadad;
   margin-top: 10px;
 }
-.state span {
+.cart .state span {
   margin-right: 5px;
 }
-.sprice {
+.cart .sprice {
   display: block;
   font-size: 16px;
   color: #ff6464;
   margin-top: 10px;
 }
-.btn {
+.cart .btn {
   display: block;
   width: 130px;
   position: relative;
-  right: 0px;
-  top: 60px;
+  right: 71%;
+  top: 68%;
 }
-.sbtn {
+.cart .sbtn {
   display: inline-block;
   text-align: center;
   line-height: 30px;
@@ -264,7 +322,7 @@ export default {
   color: #a3a3a3;
   font-size: 18px;
 }
-.btn_value {
+.cart .btn_value {
   display: inline-block;
   text-align: center;
   line-height: 30px;
@@ -276,15 +334,15 @@ export default {
   margin: 0 2px 0 2px;
 }
 /* 底部样式 */
-.bottom {
+.cart .bottom {
   position: fixed;
   justify-content: space-between;
-  bottom: 50px;
+  bottom: 8%;
   width: 100%;
   background: #fff;
   height: 50px;
 }
-.bottom_input {
+.cart .bottom_input {
   /* display: none; */
   display: inline-block;
   width: 20px;
@@ -296,42 +354,42 @@ export default {
 #bottom_input:checked + .bottom_input {
   background: #f00;
 }
-.all {
+.cart .all {
   display: inline-block;
   position: relative;
   bottom: 5px;
   font-size: 13px;
   color: #6c6c6c;
 }
-.money {
+.cart .money {
   display: block;
   font-size: 13px;
   margin-bottom: 10px;
   line-height: 10px;
   color: #ff5150;
 }
-.sum {
+.cart .sum {
   display: block;
   font-size: 13px;
   color: #ff5150;
   line-height: 10px;
 }
-.count {
+.cart .count {
   display: inline-block;
   position: relative;
-  top: 3px;
+  top: 5px;
   margin-left: 10px;
   width: 100px;
   height: 40px;
 }
-.bottom_right {
+.cart .bottom_right {
   display: inline-block;
   position: relative;
-  bottom: 4px;
+  bottom: 6px;
   right: -44px;
   line-height: 50px;
 }
-.delete {
+.cart .delete {
   display: inline-block;
   text-align: center;
   width: 80px;
@@ -340,7 +398,7 @@ export default {
   color: #fff;
   font-size: 13px;
 }
-.close {
+.cart .close {
   display: inline-block;
   text-align: center;
   width: 80px;

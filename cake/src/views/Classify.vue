@@ -1,8 +1,9 @@
 <template>
   <div>
+    <h1 class="fenlei_title">分&nbsp;类</h1>
     <div class="mySearch">
       <!-- 点击搜索框后要跳到一个新的组件页面 -->
-      <mt-search autofocus v-model="value" :result="filterResult"></mt-search>
+      <mt-search autofocus cancel-text v-model="value" :result="filterResult"></mt-search>
     </div>
     <!-- <h1>dsadsa</h1> -->
     <!-- 左侧边栏 -->
@@ -22,10 +23,10 @@
       <cube-scroll ref="scroll">
         <ul>
           <li v-for="(elem,i) in right_list" :key="i">
-            <a href v-if="elem.series!='NULL'">
+            <router-link :to="`/ProductList/${elem.cid}`" v-if="elem.series!='NULL'">
               <img src="images/1.png" />
               <span v-text="elem.series"></span>
-            </a>
+            </router-link>
           </li>
         </ul>
       </cube-scroll>
@@ -68,6 +69,7 @@ export default {
         }
       }
       this.left_list = obj_list;
+      // console.log(this.left_list)
       // 加载第一个区域
       this.selectedLabel = Object.keys(this.left_list)[0];
       this.right_list = this.left_list[this.selectedLabel];
@@ -92,6 +94,20 @@ export default {
     selectedLabel(newV) {
       // console.log(newV);
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    console.log(to);
+    //判断是从哪个路由过来的，
+    if (from.name == "Details") {
+      // to.meta.isBack = false;
+      next(vm => {
+        // console.log(vm); //vm为vue的实例
+        // console.log("组件路由钩子beforeRouteEnter的next");
+        vm.active = "me";
+      });
+      return;
+    }
+    next();
   }
 };
 </script>
@@ -99,6 +115,7 @@ export default {
 /* 搜索框的高 */
 .mySearch {
   height: 52px;
+  margin-top: 36px;
 }
 
 .mint-searchbar {
@@ -124,6 +141,7 @@ export default {
   bottom: 0;
   width: 100px;
   background-color: #f9f9f9;
+  margin-top: 36px;
 }
 
 .cube-scroll-list-wrapper {
@@ -159,6 +177,7 @@ export default {
   right: 0;
   bottom: 0;
   background-color: #f9f9f9;
+  margin-top: 36px;
 
   ul {
     position: fixed;
@@ -192,6 +211,23 @@ export default {
       color: #555;
     }
   }
+}
+
+.fenlei_title {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  text-align: center;
+  /* display: block; */
+  color: #303030;
+  height: 30px;
+  /* font-weight: bold; */
+  background: #ffffff;
+  line-height: 30px;
+  padding: 3px 0 3px 0;
+  font-size: 22px;
+  z-index: 999;
+  font-family: '苹方黑体';
 }
 </style>
 

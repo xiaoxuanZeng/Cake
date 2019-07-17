@@ -51,39 +51,79 @@ export default {
     };
   },
   created() {
-    var uid = sessionStorage.getItem("uid");
-    if (uid) {
-      this.axios.post("/user/own", `uid=${uid}`).then(result => {
-        this.uphone = result.data.data[0].phone;
-      });
-    }
+    this.load();
   },
   methods: {
+    load() {
+      this.$store.commit("setUserId");
+      var uid = sessionStorage.getItem("uid");
+      if (uid) {
+        this.axios.post("/user/own", `uid=${uid}`).then(result => {
+          this.uphone = result.data.data[0].phone;
+        });
+      }
+    },
     login() {
       // 跳转到登陆页
       this.$router.push("/Login");
     },
     // 退出登录
     logout() {
-      sessionStorage.clear("uid");
-      this.uphone = "";
+      this.$messagebox("", "是否退出登录").then(action => {
+        // sessionStorage.clear("uid");
+        // this.uphone = "";
+        this.$router.push("/Index");
+      });
     }
-  }
+  },
+  beforeRouteEnter(to, from, next) {
+    console.log(from);
+    //判断是从哪个路由过来的，
+    if (from.name == "Index") {
+      console.log(123);
+      to.meta.keepAlive = false;
+      next(vm => {
+        // console.log(vm); //vm为vue的实例
+        // console.log("组件路由钩子beforeRouteEnter的next");
+        vm.active = "me";
+      });
+      return;
+    }
+    next(vm => {
+      // console.log(vm); //vm为vue的实例
+      // console.log("组件路由钩子beforeRouteEnter的next");
+      to.meta.keepAlive = true;
+    });
+  },
+  activated() {
+    // keepAlive(缓存)开启时 重新刷新数据
+    console.log(123);
+    this.load();
+  },
+  watch: {}
 };
 </script>
 <style scoped>
 .total {
   background: #f5f5f5;
+  position: fixed;
+  top: -2%;
 }
 .not_login {
   text-align: center;
   background: #fff;
   margin-bottom: 15px;
+  height: 170px;
 }
 .logo {
-  margin-top: 20px;
+  position: relative;
+  margin-top: 0px;
 }
 .logo img {
+  /* position: absolute;
+  top:20px;
+  right:0px; */
+  margin-top: 26%;
   width: 65px;
   height: 65px;
 }
@@ -95,6 +135,13 @@ export default {
   font-size: 12px;
   margin-top: 10px;
 }
+.not_login .mint-button {
+  /* position: absolute;
+  right:150px;
+  top:120px; */
+  margin-top: 5%;
+}
+
 .order {
   font: 13px "Hiragino Sans GB", STFangsong, "Microsoft YaHei", Helvetica,
     STXihei, Arial, serif !important;
@@ -139,19 +186,19 @@ export default {
   top: 0.24rem;
 }
 .own a:nth-of-type(1):before {
-  background-position: -0.26rem -0.08rem;
+  background-position: -0.213333rem -0.08rem;
 }
 .own a:nth-of-type(2):before {
   background-position: -1.36rem -0.08rem;
 }
 .own a:nth-of-type(3):before {
-  background-position: -2.5rem -0.08rem;
+  background-position: -2.586667rem -0.08rem;
 }
 .own a:nth-of-type(4):before {
-  background-position: -3.6rem -0.08rem;
+  background-position: -3.813333rem -0.08rem;
 }
 .own a.birth:before {
-  background-position: -5.16rem -0.08rem;
+  background-position: -5.013333rem -0.08rem;
 }
 .own a.detail:before {
   background-position: -2.5rem, 4.1rem;
@@ -179,6 +226,7 @@ export default {
   clear: both;
   margin-top: 20px;
   margin-left: 20px;
+  margin-bottom: 5%;
 }
 .avatar_wrap {
   float: left;
@@ -187,7 +235,7 @@ export default {
   float: left;
   width: 75%;
   position: relative;
-  margin-top: 15px;
+  margin-top: 7%;
   margin-left: 10px;
 }
 .info .phone {
@@ -196,6 +244,6 @@ export default {
 .info .logout {
   position: absolute;
   right: 6px;
-  top: 50%;
+  top: 38%;
 }
 </style>

@@ -5,10 +5,6 @@ import router from './router'
 import store from './store'
 import 'amfe-flexible'
 
-import MyFooter from './components/MyFooter'
-
-Vue.component("my-footer", MyFooter);
-
 // 完整引入mint-ui
 import MintUI from 'mint-ui'
 // 单引引入mint-ui样式

@@ -24,7 +24,7 @@ server.listen(7700);
 
 // 使用cors中间件 解决跨域
 server.use(cors({
-  origin: ["http://localhost:7000", "http://127.0.0.1:5500", "http://127.0.0.1:7000"],
+  origin: ["http://localhost:7000", "http://127.0.0.1:5500", "http://127.0.0.1:7000","http://176.122.18.101:7000","http://172.24.127.2","*","htt://176.122.18.93"],
   credentials :true
 }));
 

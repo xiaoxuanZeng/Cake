@@ -15,11 +15,12 @@ router.get("/get_cart", (req, res) => {
     return;
   }
   // 购物车页面需要的商品信息,降序排序
-  var sql = `SELECT pname,pic,cake_cart.cid,size,cake_spec.price,is_state,style,
-              fruit,else_message,repertory,count FROM (cake_cart INNER JOIN 
-              cake_product ON cake_cart.user_id=? AND cake_cart.product_id=
-              cake_product.pid) LEFT JOIN cake_spec ON
-              cake_cart.sid=cake_spec.sid ORDER BY cake_cart.cid  DESC`;
+  var sql = `SELECT cake_product.pid,pname,pic,cake_spec.sid,size,cake_spec.price,
+              cake_cart.cid,is_state,style,fruit,else_message,repertory,count FROM 
+              (cake_cart INNER JOIN cake_product ON cake_cart.user_id=?
+              AND cake_cart.product_id=cake_product.pid) LEFT JOIN 
+              cake_spec ON cake_cart.sid=cake_spec.sid ORDER BY 
+              cake_cart.cid  DESC`;
   pool.query(sql, [user_id], (err, result) => {
     if (err) throw err;
     if (result.length > 0) {
@@ -79,7 +80,7 @@ router.post("/del_cart", (req, res) => {
 });
 
 // 加入购物车路由 (需要参数用户id,商品id,规格id,数量)
-router.post("add_cart", (req, res) => {
+router.post("/add_cart", (req, res) => {
   var user_id = req.body.user_id;
   var product_id = req.body.product_id;
   var sid = req.body.sid;
@@ -89,28 +90,29 @@ router.post("add_cart", (req, res) => {
     res.send({ code: 400, msg: "未登录状态" });
     return;
   }
-
+  count = parseInt(count);
   // 先查询一下这个用户是否已经把该商品加入购物车
-  var sql = `SELECT user_id,product_id,sid FROM cake_cart WHERE user_id=
+  var sql = `SELECT user_id,product_id,sid,count FROM cake_cart WHERE user_id=?
               AND product_id=? AND sid=?`;
   pool.query(sql, [user_id, product_id, sid], (err, result) => {
     if (err) throw err;
-    // 该用户购物车已有该商品,只修改该商品的数量
+    // 该用户购物车已有该商品,累加该商品的数量
     if (result.length > 0) {
-      var sql2 = `UPDATE cake_cart SET count=? WHERE user_id=
+      var add_count = parseInt(result[0].count) + count;
+      var sql2 = `UPDATE cake_cart SET count=? WHERE user_id=?
                   AND product_id=? AND sid=?`;
-      pool.query(sql2, [count, user_id, product_id, sid], (err, result) => {
+      pool.query(sql2, [add_count, user_id, product_id, sid], (err, result) => {
         if (err) throw err;
-        if (res.affectedRows > 0) {
-          res.send({ code: 200, msg: "购物车已有该商品,更新了商品数量" });
+        if (result.affectedRows > 0) {
+          res.send({ code: 200, msg: "购物车已有该商品,累加商品数量" });
         } else {
-          res.send({ code: 400, msg: "购物车已有该商品,购物车商品数量更新失败" });
+          res.send({ code: 400, msg: "购物车已有该商品,购物车商品数量累加失败" });
         }
       })
     } else {
       // 没有该商品在购物车就创建该数据
       var sql3 = "INSERT INTO cake_cart SET ?";
-      pool.query(sql3, [obj.body], (err, result) => {
+      pool.query(sql3, [req.body], (err, result) => {
         if (err) throw err;
         if (result.affectedRows > 0) {
           res.send({ code: 200, msg: "商品添加购物车成功" });

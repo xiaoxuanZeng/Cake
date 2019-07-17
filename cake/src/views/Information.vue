@@ -11,7 +11,7 @@
       <div class="same_style">
         <span class="item_info" v-text="`手机号:${phone}`"></span>
       </div>
-        <mt-field label="真实姓名:" v-model="real_name"></mt-field>
+      <mt-field label="真实姓名:" v-model="real_name"></mt-field>
       <div class="sex_info">
         性别:
         <label for="male">
@@ -34,6 +34,8 @@
   </div>
 </template>
 <script>
+// 导入eventBus 兄弟之间通信
+import eventBus from "../eventBus.js";
 export default {
   // 返回上一级 是回到个人中心页
   // props:{
@@ -45,15 +47,17 @@ export default {
       phone: "",
       real_name: "",
       gender: "",
-      birthday: "" //日期组件选中的值
+      birthday: "", //日期组件选中的值
+      isFirstEnter: false // 是否第一次进入，默认false
     };
   },
   created() {
+    this.isFirstEnter = true;
     // 获取该用户的个人信息
     var uid = sessionStorage.getItem("uid");
     if (uid) {
       this.axios.post("/user/own", `uid=${uid}`).then(result => {
-        console.log(result);
+        // console.log(result);
         this.phone = result.data.data[0].phone;
         this.real_name = result.data.data[0].real_name;
         this.real_name = this.real_name == null ? "" : this.real_name;
@@ -74,7 +78,8 @@ export default {
   },
   methods: {
     jump() {
-      this.$router.go(-1);
+      this.$router.push("/Index");
+      eventBus.$emit("activeState", "me");
     },
     showFormatPicker() {
       if (!this.formatPicker) {
@@ -100,18 +105,23 @@ export default {
     //存入用户修改的个人信息
     save() {
       var uid = sessionStorage.getItem("uid");
-      if(female.checked==true){
-        this.gender=0
-      }else if(male.checked==true){
-        this.gender=1
+      if (female.checked == true) {
+        this.gender = 0;
+      } else if (male.checked == true) {
+        this.gender = 1;
       }
-      this.birth2=this.birth.replace(/[\u4e00-\u9fa5]/g,"-");
+      this.birth2 = this.birth.replace(/[\u4e00-\u9fa5]/g, "-");
       this.birth2 = this.birth.split("T")[0];
-      this.axios.post("/user/set", `uid=${uid}&real_name=${this.real_name}&gender=${this.gender}&birthday=${this.birth2}`).then(result => {
-        console.log(result);
-      });
+      this.axios
+        .post(
+          "/user/set",
+          `uid=${uid}&real_name=${this.real_name}&gender=${this.gender}&birthday=${this.birth2}`
+        )
+        .then(result => {
+          // console.log(result);
+        });
     }
-  }
+  },
 };
 </script>
 <style>
@@ -199,7 +209,7 @@ export default {
   color: #fff;
   font-size: 12px;
 }
-.mint-field .mint-cell-title{
-  width: 1.8rem !important
+.mint-field .mint-cell-title {
+  width: 1.8rem !important;
 }
 </style>
