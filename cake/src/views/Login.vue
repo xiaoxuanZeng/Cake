@@ -1,6 +1,6 @@
 <template>
   <div class="page-navbar">
-    <p class="return_text" @click="$router.push('/Own')">
+    <p class="return_text" @click="$router.push('/Index')">
       <i class="iconfont return">&#xe732;</i>
     </p>
     <mt-navbar class="page-part" v-model="selected">
@@ -159,6 +159,10 @@ export default {
       }
       if (!password) {
         this.$toast("密码不能为空");
+        return;
+      }
+      if (this.checkCode != code) {
+        this.$toast("验证码不正确");
         return;
       }
       if (reg2.test(password) == false) {

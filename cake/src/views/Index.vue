@@ -6,8 +6,9 @@
         <mt-tab-container-item id="myIndex">
           <div class="myIndexBotton" style="text-align: center;;width:100%">
             <!-- 搜索 -->
-            <div class="mySearch">
-              <span class="iconfont sousuo" @click.native="$router.push('/Search')">&#xe65f;&nbsp;搜索</span>
+            <div class="my_search">
+              <span class="iconfont sousuo" @click="$router.push('/Search')">&#xe65f;&nbsp;搜索</span>
+              <div style="background:#ddd;height:1px;width:100%;margin:12px 0"></div>
             </div>
             <!-- 产品导航 -->
             <div class="product-nav">
@@ -106,17 +107,17 @@
 
       <!-- 底部 -->
       <mt-tabbar v-model="active" fixed>
-        <mt-tab-item id="myIndex" @click.native="changeState(0)">
+        <mt-tab-item id="myIndex">
           <!-- <img slot="icon" src="images/1.jpg" /> -->
           <span slot="icon" class="iconfont myicon">&#xe604;</span>首页
         </mt-tab-item>
-        <mt-tab-item id="myProduct" @click.native="changeState(0)">
+        <mt-tab-item id="myProduct">
           <span slot="icon" class="iconfont myicon">&#xe632;</span>所有商品
         </mt-tab-item>
-        <mt-tab-item id="myCart" @click.native="changeState(0)">
+        <mt-tab-item id="myCart">
           <span slot="icon" class="iconfont myicon">&#xe611;</span>购物车
         </mt-tab-item>
-        <mt-tab-item id="me" @click.native="changeState(0)">
+        <mt-tab-item id="me">
           <span slot="icon" class="iconfont myicon">&#xe615;</span>个人中心
         </mt-tab-item>
       </mt-tabbar>
@@ -141,19 +142,25 @@ export default {
       // 首页显示某个系列的商品数据
       product_list: [],
       // 某个系列下的id
-      cid: 7,
-      // 保存当前状态
-      currentIndex: [
-        { isSelect: true },
-        { isSelect: false },
-        { isSelect: false },
-        { isSelect: false }
-      ]
+      cid: 7
     };
   },
   // props: ["old_active"],
   created() {
-    // console.log(this.$route.meta.isBack);
+    // 有其他页面返回到首页时,去到特定的页面
+    // console.log(this)
+    // console.log("1:" + this.active);
+    // var index = this;
+    // index.eventBus.$on("activeState", data => {
+    //   //index._data.active = active;
+    //   // index._data.active = active;
+    //   console.log(index.active);
+    //   console.log((this.active = data));
+    //   //var active = this.active;
+    //   // console.log(this.active);
+    // });
+    // console.log(index.active);
+    //console.log(1);
 
     // 屏幕可用区域变化时执行 (分类的高度需要与屏幕高度一样)
     this.resizeHeight = screen.availHeight;
@@ -161,7 +168,14 @@ export default {
       this.resizeHeight = screen.availHeight;
     });
 
-    this.load();
+    // 获取后台数据显示 需要传入某系列的cid
+    var cid = this.cid;
+    this.axios.get("/index/index", { params: { cid: cid } }).then(result => {
+      // console.log(result.data.data);
+      var list = result.data.data;
+      this.carousel_list = list.carousel;
+      this.product_list = list.product;
+    });
   },
   // 注册子组件
   components: {
@@ -170,29 +184,6 @@ export default {
     own: Own
   },
   methods: {
-    load() {
-      // 获取后台数据显示 需要传入某系列的cid
-      var cid = this.cid;
-      this.axios.get("/index/index", { params: { cid: cid } }).then(result => {
-        // console.log(result.data.data);
-        var list = result.data.data;
-        this.carousel_list = list.carousel;
-        this.product_list = list.product;
-      });
-    },
-    changeState(n) {
-      // 1: n当前按钮下标
-      // 2: 创建循环数据
-      for (var i = 0; i < this.currentIndex.length; i++) {
-        // 3: 如果当前下标与参数下标一致 true
-        if (n == i) {
-          this.currentIndex[i].isSelect = true;
-        } else {
-          // 4: 其他元素 false
-          this.currentIndex[i].isSelect = false;
-        }
-      }
-    },
     detail() {
       this.active = "myProduct";
     },
@@ -205,64 +196,26 @@ export default {
     active() {
       // console.log(123)
     }
-  },
-  beforeRouteEnter(to, from, next) {
-    // console.log(to);
-    //判断是从哪个路由过来的，
-    if (from.name == "Infornation") {
-      // to.meta.isBack = false;
-      next(vm => {
-        // console.log(vm); //vm为vue的实例
-        // console.log("组件路由钩子beforeRouteEnter的next");
-        vm.active = "me";
-      });
-      return;
-    }
-    next();
   }
-  // activated() {
-  //   // console.log(this.active);
-  //   // this.active="myCart"
-  //   // console.log(789);
-  //   // console.log(this.$route.meta.isBack);
-
-  //   this.$emit("updateCart", true);
-  //   if (!this.$route.meta.isBack) {
-  //     // console.log(123);
-  //     // 如果isBack是false，表明需要获取新数据，否则就不再请求，直接使用缓存的数据
-  //     this.load();
-  //   }
-  //   // 恢复成默认的false，避免isBack一直是true，导致下次无法获取数据
-  //   this.$route.meta.isBack = false;
-  // }
 };
 </script>
 <style scope>
-.mySearch {
-  border-bottom: 1px solid #ddd;
-  background: #f1f1f1;
-  margin-top: 0;
-  padding: 15px 0 10px 0;
+body {
+  background: #fff;
 }
-.bold {
-  font-weight: bold;
-}
-.list-nav i {
-  color: #555453;
-  font-size: 34px !important;
+.my_search {
+  width: 92%;
+  margin: 12px auto;
+  background: #fff;
 }
 .sousuo {
   display: block;
-  width: 92%;
   border: 1px solid #5555;
   border-radius: 5px;
   color: #ccc;
-  background-color: #f1f1f1;
-  /* text-align:center; */
-  margin: 0 auto;
-  /* margin-top: 43px; */
-  font-size: 18px;
-  line-height: 30px;
+  background-color: #fff;
+  font-size: 15px;
+  line-height: 32px;
 }
 .clearfix::before {
   content: "";
@@ -291,6 +244,7 @@ img {
   display: block;
   font-size: 1rem;
   margin-bottom: 0.2rem;
+  opacity: 0.5;
 }
 .product-nav .list-nav span.list-menu {
   font-size: 0.35rem;
@@ -362,8 +316,8 @@ img {
   width: 100%;
 }
 .mylist > li {
-  width: 33.3%;
-  margin-bottom: 3px;
+  width: 33%;
+  margin-bottom: 0.2rem;
 }
 /* 图片 */
 .snack-item img {
@@ -389,7 +343,7 @@ img {
   text-align: left;
 }
 .snack-item span {
-  margin: 0.12rem 0;
+  margin: 0.12rem 0 0 0;
   font-weight: 600;
   white-space: pre-wrap;
   font-size: 0.4rem;
@@ -404,19 +358,17 @@ img {
   color: crimson;
 }
 /* 搜索框的高 */
-.mySearch {
-  height: 32px;
-}
+
 .mint-searchbar {
   background-color: #efeff4 !important;
 }
 /* 取消的文字样式 */
-.mySearch .mint-searchbar-cancel {
+.my_search .mint-searchbar-cancel {
   font-size: 14px !important;
   color: #000 !important;
 }
 /* 搜索框的文字样式 */
-.mySearch .mint-searchbar-core {
+.my_search .mint-searchbar-core {
   font-size: 14px !important;
 }
 /* 底部icon图标 */

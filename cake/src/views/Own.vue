@@ -71,8 +71,9 @@ export default {
     logout() {
       this.$messagebox("", "是否退出登录").then(action => {
         // sessionStorage.clear("uid");
-        // this.uphone = "";
-        this.$router.push("/Index");
+        this.uphone = "";
+        this.$store.commit("delUserId");
+        this.$router.push("/Login");
       });
     }
   },

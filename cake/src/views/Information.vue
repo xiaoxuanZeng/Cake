@@ -119,6 +119,7 @@ export default {
         )
         .then(result => {
           // console.log(result);
+          this.$toast("保存成功")
         });
     }
   },

@@ -6,7 +6,7 @@
     </div>
     <div class="mysearch">
       <input type="text" class="search" />
-      <span class="search-btn">搜索</span>
+      <span class="search-btn" @click="$router.push('/Search')">搜索</span>
     </div>
     <ul class="order">
       <li>

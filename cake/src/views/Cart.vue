@@ -1,10 +1,11 @@
 <template>
   <div class="cart">
-    <h1 class="title">购物车</h1>
     <div class="cart_box" v-for="(item,index) of list" :key="index">
       <label for="input" @click="Selected">
         <input type="checkbox" class="input" v-model="item.selected" />
-        <span class="input_sp input_red" v-if="item.selected" @click="radios(index)"></span>
+        <span class="input_sp input_red iconfont" v-if="item.selected" @click="radios(index)">
+          <span class="gouxuan_site">&#xe786;</span>
+        </span>
         <span class="input_sp" v-if="!item.selected" @click="radios(index)"></span>
       </label>
       <router-link :to="`/Details/${item.pid}`">
@@ -36,7 +37,7 @@
     <div class="bottom">
       <label for="bottom_input" @change="selectAll">
         <input type="checkbox" v-model="isSelectAll" id="bottom_input" />
-        <span class="bottom_input"></span>
+        <span class="bottom_input iconfont">&#xe786;</span>
         <span class="all">全选</span>
       </label>
       <div class="count">
@@ -55,6 +56,7 @@
   </div>
 </template>
 <script>
+import eventBus from "../eventBus.js";
 export default {
   data() {
     return {
@@ -69,9 +71,9 @@ export default {
   },
   created() {
     // 登陆状态的uid
-    console.log(sessionStorage.getItem("uid"));
+    // console.log(sessionStorage.getItem("uid"));
     this.uid = this.$store.getters.getUserId;
-    if (this.uid != "") this.load();
+    this.load();
   },
   methods: {
     // 获取购物车列表信息
@@ -80,9 +82,10 @@ export default {
       var uid = this.uid;
       if (uid != undefined) {
         this.axios
-          .get("/cart/get_cart", { params: { user_id: 1 } })
+          .get("/cart/get_cart", { params: { user_id: uid } })
           .then(result => {
             // console.log(result.data);
+            this.list = result.data.data;
             if (result.data.code != 400) {
               for (var i of result.data.data) {
                 i.selected = false;
@@ -100,9 +103,12 @@ export default {
     selectAll(e) {
       //全选按钮状态
       var cb = e.target.checked;
+      console.log(cb)
       //依据状态修改列表cb
       for (var item of this.list) {
         item.selected = cb;
+        console.log(item.selected)
+        this.hh()
       }
     },
     // 单选
@@ -126,18 +132,22 @@ export default {
       for (var i = 0; i < list.length; i++) {
         if (list[i].selected) {
           price += list[i].count * list[i].price;
+          console.log(price)
           numb += list[i].count;
+          console.log(numb)
         }
       }
       // 总价
       this.money = price;
+      console.log(this.money)
       //勾选数量
       this.num = numb;
-      // console.log(numb);
+      console.log(numb);
     },
-    radios(index) {
+     radios(index) {
       //循环的商品
       var list = this.list;
+      console.log(list)
       list[index].selected = !list[index].selected;
       this.hh();
     },
@@ -203,6 +213,9 @@ export default {
             // console.log(result);
             // 重新加载数据
             this.load();
+           this.money=0;
+            this.num=0;
+            this.isSelectAll = false
           });
         })
         .catch(err => {
@@ -213,15 +226,21 @@ export default {
   watch: {
     uid() {
       this.load();
-    }
+    },
+    
   },
   activated() {
     // keepAlive(缓存)开启时 重新刷新数据
-    console.log(456);
+    this.isSelectAll=false;
+    this.num=0;
+    this.money=0;
+    var uid = sessionStorage.getItem("uid");
+    this.list = [];
     this.axios
-      .get("/cart/get_cart", { params: { user_id: 1 } })
+      .get("/cart/get_cart", { params: { user_id: uid } })
       .then(result => {
         // console.log(result.data);
+        this.list = result.data.data;
         if (result.data.code != 400) {
           for (var i of result.data.data) {
             i.selected = false;
@@ -235,25 +254,11 @@ export default {
   }
 };
 </script>
-<style>
+<style scope>
 .none {
   display: none;
 }
-.cart .title {
-  position: relative;
-  width: 100%;
-  top: 0;
-  text-align: center;
-  /* display: block; */
-  color: #303030;
-  height: 30px;
-  background: #ffffff;
-  line-height: 30px;
-  padding: 3px 0 3px 0;
-  font-size: 22px;
-  z-index: 9;
-  font-family: "苹方黑体";
-}
+
 .cart .cart_box {
   display: flex;
   /* margin-top:20px; */
@@ -273,9 +278,22 @@ export default {
   border: 1px solid #7b7b7b;
   border-radius: 50%;
   margin: 45px 8px 0 8px;
+  box-sizing: border-box;
 }
 .cart .input_red {
-  background: #f00;
+  background: #ff4001;
+  border: 0 !important;
+  width: 20px;
+  height: 20px;
+}
+.gouxuan_site {
+  position: relative;
+  top: -1px;
+  left: -2px;
+  color: #fff;
+  font-size: 23px;
+  /* font-weight: bold; */
+  border: 0 !important;
 }
 .cart .img {
   width: 100px;
@@ -350,9 +368,19 @@ export default {
   border: 1px solid #7b7b7b;
   border-radius: 50%;
   margin: 0px 5px 0px 8px;
+  font-size: 0;
+  position: relative;
+  top: -21px;
+  left: -5px;
 }
 #bottom_input:checked + .bottom_input {
-  background: #f00;
+  background: #ff4001;
+  font-size: 23px;
+  position: relative;
+  top: -1px;
+  left: -5px;
+  color: #fff;
+  /* padding-right:2px; */
 }
 .cart .all {
   display: inline-block;
@@ -385,8 +413,8 @@ export default {
 .cart .bottom_right {
   display: inline-block;
   position: relative;
-  bottom: 6px;
-  right: -44px;
+  bottom: 4px;
+  right: -36px;
   line-height: 50px;
 }
 .cart .delete {

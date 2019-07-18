@@ -6,7 +6,7 @@
     <mt-field placeholder="请输入验证码" label="验证码" class="float-left" v-model="code"></mt-field>
     <mt-field type="password" label="新密码" placeholder="8~16位,数字、字母、字符包含两种" v-model="password"></mt-field>
     <div class="button">
-       <mt-button class="sign" @click="sign">确定</mt-button>
+      <mt-button class="sign" @click="sign">确定</mt-button>
     </div>
   </div>
 </template>
@@ -83,9 +83,9 @@ export default {
         this.checkCode = this.code;
       }
     },
-   //  重置密码
-   sign(){
-        if (!this.phone) {
+    //  重置密码
+    sign() {
+      if (!this.phone) {
         this.$toast("手机号不能为空");
         return;
       }
@@ -96,28 +96,30 @@ export default {
       if (!this.password) {
         this.$toast("密码不能为空");
         return;
-      }else{
-      this.axios.post("/user/loseP","phone="+this.phone+"&upwd="+this.password).then(result=>{
-         console.log(result)
-      })
-   }
-   }
+      } else {
+        this.axios
+          .post("/user/loseP", "phone=" + this.phone + "&upwd=" + this.password)
+          .then(result => {
+            this.$toast("修改成功");
+          });
+      }
+    }
   }
 };
 </script>
 <style>
-.reset .verification{
-   background: none;
-   outline: none;
-   }
-.button{
-   margin-top: 20px;
+.reset .verification {
+  background: none;
+  outline: none;
 }
-.reset .sign{
-   width: 100%;
-   background: #ff4001 !important;
-   color: #fff;
-   font-size: 15px;
+.button {
+  margin-top: 20px;
+}
+.reset .sign {
+  width: 100%;
+  background: #ff4001 !important;
+  color: #fff;
+  font-size: 15px;
 }
 </style>
 
