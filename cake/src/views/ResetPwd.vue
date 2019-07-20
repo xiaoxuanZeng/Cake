@@ -7,6 +7,7 @@
     <mt-field type="password" label="新密码" placeholder="8~16位,数字、字母、字符包含两种" v-model="password"></mt-field>
     <div class="button">
       <mt-button class="sign" @click="sign">确定</mt-button>
+      <p @click="$router.push('/Login')" class="login_jump">返回登录注册页</p>
     </div>
   </div>
 </template>
@@ -120,6 +121,12 @@ export default {
   background: #ff4001 !important;
   color: #fff;
   font-size: 15px;
+}
+.login_jump {
+  font-size: 0.4rem;
+  color: #ccc;
+  margin-top: 20px;
+  margin-left: 10px;
 }
 </style>
 

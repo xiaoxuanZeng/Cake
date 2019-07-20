@@ -11,6 +11,7 @@ import Close from './views/Close.vue'
 import Search from './views/Search.vue'
 import ProductList from './views/ProductList.vue'
 import ResetPwd from './views/ResetPwd.vue'
+import OrderForm from './views/OrderForm.vue'
 
 Vue.use(Router)
 
@@ -28,7 +29,7 @@ export default new Router({
       component: Index,
       name: 'Index',
       meta: {
-        keepAlive: true, //此组件不需要被缓存
+        keepAlive: true, //此组件需要被缓存
         isBack: false, //用于判断上一个页面是哪个
       }
     },
@@ -83,7 +84,7 @@ export default new Router({
       name: 'ProductList',
       props: true,
       meta: {
-        keepAlive: false, //此组件需要被缓存
+        keepAlive: true, //此组件需要被缓存
         isBack: false, //用于判断上一个页面是哪个
       }
     },
@@ -92,5 +93,24 @@ export default new Router({
       name: 'ResetPwd',
       component: ResetPwd
     },
-  ]
+    {
+      path: '/OrderForm',
+      name: 'OrderForm',
+      component: OrderForm
+    },
+  ],
+  // 滚动行为
+  mode: 'history',
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      // 返回历史是返回上一次的高度
+      return savedPosition
+    } else {
+      // 否则都会到顶部
+      return {
+        x: 0,
+        y: 0
+      }
+    }
+  }
 })

@@ -27,8 +27,8 @@ router.get("/series", (req, res) => {
   }
   // 获取某系列商品信息
   var sql = `SELECT cname,series,pid,pname,price,cake_product.pic,read_num,
-              sales_volume FROM cake_catalogue INNER JOIN cake_product ON 
-              cake_catalogue.cid=? AND cake_product.cid=?`;
+              sales_volume,shelf_time FROM cake_catalogue INNER JOIN 
+              cake_product ON cake_catalogue.cid=? AND cake_product.cid=?`;
   pool.query(sql, [cid, cid], (err, result) => {
     if (err) throw err;
     if (result.length > 0) {

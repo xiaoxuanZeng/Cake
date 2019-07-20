@@ -1,14 +1,14 @@
 <template>
-  <div class="total">
+  <div class="total" v-cloak>
     <!-- 未登录状态下 -->
-    <div class="not_login" v-if="uphone==''">
+    <div class="not_login" v-if="$store.getters.getUserId==''">
       <div class="logo">
         <img src="../../public/images/avatar.png" alt />
       </div>
       <mt-button class="myButton" @click="login">登录</mt-button>
     </div>
     <!-- 登录状态下 -->
-    <div class="is_login" v-if="uphone!=''">
+    <div class="is_login" v-if="$store.getters.getUserId!=''" v-cloak>
       <div class="avatar_wrap">
         <router-link to="Infornation" class="logo">
           <img src="../../public/images/avatar.png" alt />
@@ -23,10 +23,10 @@
     <div class="order">
       <div class="own">
         <p class="section_title">我的订单</p>
-        <a href="javascript:;">待付款</a>
-        <a href="javascript:;">待发货</a>
-        <a href="javascript:;">待收获</a>
-        <a href="javascript:;">我的订单</a>
+        <a href="/OrderForm">待付款</a>
+        <a href="/OrderForm">待发货</a>
+        <a href="/OrderForm">待收获</a>
+        <a href="/OrderForm">我的订单</a>
       </div>
     </div>
     <div class="service">
@@ -56,10 +56,13 @@ export default {
   methods: {
     load() {
       this.$store.commit("setUserId");
-      var uid = sessionStorage.getItem("uid");
+      var uid = this.$store.getters.getUserId;
       if (uid) {
         this.axios.post("/user/own", `uid=${uid}`).then(result => {
-          this.uphone = result.data.data[0].phone;
+          // console.log(result.data)
+          if (result.data.code != 400) {
+            this.uphone = result.data.data[0].phone;
+          }
         });
       }
     },
@@ -77,34 +80,17 @@ export default {
       });
     }
   },
-  beforeRouteEnter(to, from, next) {
-    console.log(from);
-    //判断是从哪个路由过来的，
-    if (from.name == "Index") {
-      console.log(123);
-      to.meta.keepAlive = false;
-      next(vm => {
-        // console.log(vm); //vm为vue的实例
-        // console.log("组件路由钩子beforeRouteEnter的next");
-        vm.active = "me";
-      });
-      return;
-    }
-    next(vm => {
-      // console.log(vm); //vm为vue的实例
-      // console.log("组件路由钩子beforeRouteEnter的next");
-      to.meta.keepAlive = true;
-    });
-  },
   activated() {
     // keepAlive(缓存)开启时 重新刷新数据
-    console.log(123);
     this.load();
   },
   watch: {}
 };
 </script>
 <style scoped>
+[v-cloak] {
+  display: none;
+}
 .total {
   background: #f5f5f5;
   position: fixed;
@@ -129,11 +115,11 @@ export default {
   height: 65px;
 }
 .myButton {
-  width: 70px;
-  height: 30px;
+  width: 80px;
+  height: 35px;
   background: #a38d6b;
   color: #fff;
-  font-size: 12px;
+  font-size: 13px;
   margin-top: 10px;
 }
 .not_login .mint-button {

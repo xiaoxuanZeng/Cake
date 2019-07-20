@@ -72,13 +72,34 @@ export default {
           .post("/user/reg", "phone=" + this.phone + "&upwd=" + this.password)
           .then(result => {
             console.log(result);
-            this.$toast(result.data.msg);
+            console.log(result.data);
+            // 失败弹出提示消息
+            if (result.data.code == 400) {
+              this.$toast(result.data.msg);
+            }
+            // 成功弹出消息点击确定跳至首页
             if (result.data.code == 200) {
+              this.$messagebox
+                .confirm("是否直接登录到首页")
+                .then(action => {
+                  // 确定--跳首页
+                  var uid = result.data.data.insertId;
+                  sessionStorage.setItem("uid", uid);
+                  this.$router.push("/Index");
+                })
+                .catch(err => {
+                  if (err == "cancel") {
+                    setTimeout(() => {
+                      this.selected = "2";
+                      this.password = "";
+                    }, 3000);
+                  }
+                });
               // 3秒后跳转登录页
-              setTimeout(() => {
+              /*   setTimeout(() => {
                 this.selected = "2";
                 this.password = "";
-              }, 3000);
+              }, 3000); */
             }
           });
       }
@@ -88,6 +109,10 @@ export default {
       var reg = /^1[3-9]\d{9}$/;
       if (!phone) {
         this.$toast("请输入合法手机号");
+        return;
+      }
+      if (reg.test(phone) == false) {
+        this.$toast("手机号格式不正确");
         return;
       }
       if (reg.test(phone) == true) {
@@ -161,10 +186,6 @@ export default {
         this.$toast("密码不能为空");
         return;
       }
-      if (this.checkCode != code) {
-        this.$toast("验证码不正确");
-        return;
-      }
       if (reg2.test(password) == false) {
         this.$toast("8~16位,数字、字母、字符至少包含两种");
         return;
@@ -178,6 +199,7 @@ export default {
               sessionStorage.setItem("uid", uid);
               // 跳转主页
               this.$router.push("/Index");
+              this.$store.commit("setUserId");
             } else {
               this.$toast(result.data.msg);
             }
@@ -202,12 +224,12 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style>
 .page-navbar {
   margin-top: 20px;
 }
 .page-navbar .mint-tab-item-label {
-  font-size: 16px;
+  font-size: 16px !important;
 }
 .mint-field-other {
   color: #fb7299;

@@ -34,7 +34,7 @@ router.post("/reg", (req, res) => {
       pool.query(sql2, [phone, upwd], (err, result) => {
         if (err) throw err;
         if (result.affectedRows > 0) {
-          res.send({ code: 200, msg: "注册成功" });
+          res.send({ code: 200, data: result, msg: "注册成功" });
         } else {
           res.send({ code: 400, msg: "注册失败" });
         }
@@ -65,7 +65,7 @@ router.post("/login", (req, res) => {
     if (result.length > 0) {
       // session 的登陆id
       req.session.uid = result[0].uid;
-      // console.log(req.session.uid)
+      console.log(req.session.uid)
       res.send({ code: 200, data: result });
     } else {
       res.send({ code: 400, msg: "用户名或密码错误" });
@@ -82,7 +82,7 @@ router.post("/loseP", (req, res) => {
     if (err) throw err;
     if (result.length > 0) {
       var sql2 = `UPDATE cake_user SET upwd=md5(?) WHERE phone=?`
-      console.log(456)
+      // console.log(456)
       pool.query(sql2, [upwd, phone], (err, result) => {
         if (err) throw err;
         res.send(result)
@@ -117,17 +117,18 @@ router.post("/own", (req, res) => {
 
 // 个人信息 /set
 router.post("/set", (req, res) => {
-  console.log(req.body)
-  var uid=req.body.uid;
+  var uid = req.body.uid;;
   var real_name = req.body.real_name;
-  console.log(real_name)
   var gender = req.body.gender;
   var birthday = req.body.birthday;
   var sql = `UPDATE cake_user SET real_name=?,gender=?,birthday=? WHERE uid=?`
   pool.query(sql, [real_name, gender, birthday, uid], (err, result) => {
     if (err) throw err;
-    // console.log(result)
-    res.send(result)
+    if (result.affectedRows > 0) {
+      res.send({ code: 200, data: result });
+    } else {
+      res.send({ code: 400, msg: "保存失败" })
+    }
   })
 })
 

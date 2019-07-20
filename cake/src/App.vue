@@ -14,15 +14,14 @@
 export default {
   data() {
     return {
-      footer_show: true,
+      footer_show: true
     };
   },
   created() {
     // 设置保存登录状态的uid
     this.$store.commit("setUserId");
   },
-  methods: {
-  }
+  methods: {}
 };
 </script>
 <style >
@@ -30,5 +29,22 @@ export default {
 @import "./assets/iconfont/iconfont2.css";
 @import "./assets/iconfont/iconfont3.css";
 </style>
-<style>
+<style lang="stylus" rel="stylesheet/stylus">
+.horizontal-scroll-list-wrap {
+  border: 0 !important;
+
+  .cube-scroll-content {
+    display: inline-block;
+  }
+
+  .list-wrapper {
+    padding: 0 10px;
+    line-height: 60px;
+    white-space: nowrap;
+  }
+
+  .list-item {
+    display: inline-block;
+  }
+}
 </style>

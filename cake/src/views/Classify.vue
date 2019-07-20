@@ -1,12 +1,13 @@
 <template>
   <div>
-    <h1 class="fenlei_title">分&nbsp;类</h1>
-    <div class="mySearch">
-      <!-- 点击搜索框后要跳到一个新的组件页面 -->
-      <mt-search autofocus cancel-text v-model="value" :result="filterResult"></mt-search>
+    <!-- 点击搜索框后要跳到一个新的组件页面 -->
+    <div class="my_search">
+      <span class="iconfont sousuo" @click="$router.push('/Search')">&#xe65f;&nbsp;搜索</span>
+      <div style="background:#ddd;height:1px;width:100%;margin:12px 0"></div>
     </div>
     <!-- <h1>dsadsa</h1> -->
     <!-- 左侧边栏 -->
+    <!-- <div></div> -->
     <div class="let-tabbar">
       <div class="left-panel">
         <cube-scroll>
@@ -21,14 +22,20 @@
     <!-- 右边 -->
     <div class="right-panel">
       <cube-scroll ref="scroll">
-        <ul>
-          <li v-for="(elem,i) in right_list" :key="i">
+        <ul v-if="!noClassify">
+          <li v-for="(elem,i) of right_list" :key="i">
             <router-link :to="`/ProductList/${elem.cid}`" v-if="elem.series!='NULL'">
-              <img src="images/1.png" />
+              <img :src="`http://127.0.0.1:7700/${elem.pic}`" />
               <span v-text="elem.series"></span>
             </router-link>
           </li>
         </ul>
+        <img
+          v-if="noClassify"
+          style="width:100%;"
+          src="images/product/9949ccc6037a03283d42fbbcf505c33_03.png"
+          alt
+        />
       </cube-scroll>
     </div>
   </div>
@@ -42,13 +49,15 @@ export default {
       defaultResult: ["蛋糕", "123", "1", "124567"],
       left_list: {},
       right_list: [],
-      selectedLabel: ""
+      selectedLabel: "",
+      // 没有该分类时
+      noClassify: false
     };
   },
   created() {
     // 请求数据
     this.axios.get("/product/classify").then(result => {
-      // console.log(result.data.msg);
+      // console.log(result.data);
       var data = result.data.data;
       // 请求回来的数据格式不是我想要的数据格式要转成:
       // left_list: {蛋糕:[{name:"蛋糕",pic:"images/1.jspg"},...],...,...,}
@@ -79,7 +88,11 @@ export default {
     changeHandler(label) {
       // 点击左边后换到别的区域
       this.right_list = this.left_list[label];
-      // console.log(this.right_list);
+      if (this.right_list[0].series == "NULL") {
+        this.noClassify = true;
+      } else {
+        this.noClassify = false;
+      }
     }
   },
   computed: {
@@ -112,25 +125,22 @@ export default {
 };
 </script>
 <style lang="stylus" rel="stylesheet/stylus">
-/* 搜索框的高 */
-.mySearch {
-  height: 52px;
-  margin-top: 36px;
-}
-
-.mint-searchbar {
-  background-color: #efeff4 !important;
-}
-
-/* 取消的文字样式 */
-.mySearch .mint-searchbar-cancel {
-  font-size: 14px !important;
-  color: #000 !important;
-}
-
 /* 搜索框的文字样式 */
-.mySearch .mint-searchbar-core {
-  font-size: 14px !important;
+.my_search {
+  width: 92%;
+  margin: 12px auto;
+  background: #fff;
+}
+
+.sousuo {
+  display: block;
+  border: 1px solid #5555;
+  border-radius: 5px;
+  color: #ccc;
+  background-color: #fff;
+  font-size: 15px;
+  line-height: 32px;
+  text-align: center;
 }
 
 /* 左侧导航 */
@@ -141,7 +151,7 @@ export default {
   bottom: 0;
   width: 100px;
   background-color: #f9f9f9;
-  margin-top: 36px;
+  // margin-top: 36px;
 }
 
 .cube-scroll-list-wrapper {
@@ -177,8 +187,8 @@ export default {
   right: 0;
   bottom: 0;
   background-color: #f9f9f9;
-  margin-top: 36px;
 
+  // margin-top: 36px;
   ul {
     position: fixed;
     background-color: #fff;
@@ -211,23 +221,6 @@ export default {
       color: #555;
     }
   }
-}
-
-.fenlei_title {
-  position: absolute;
-  width: 100%;
-  top: 0;
-  text-align: center;
-  /* display: block; */
-  color: #303030;
-  height: 30px;
-  /* font-weight: bold; */
-  background: #ffffff;
-  line-height: 30px;
-  padding: 3px 0 3px 0;
-  font-size: 22px;
-  z-index: 999;
-  font-family: '苹方黑体';
 }
 </style>
 

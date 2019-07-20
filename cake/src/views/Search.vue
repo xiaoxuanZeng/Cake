@@ -2,7 +2,7 @@
   <div>
     <div class="mt">
       <div class="fl">
-        <i class="iconfont" @click="$router.push('/Index')">&#xe732;</i>
+        <i class="iconfont" @click="$router.go(-1)">&#xe732;</i>
       </div>
       <div>
         <p class="search_title">搜索</p>
@@ -23,7 +23,7 @@
       <div class="history">
         <div class="h_title">
           搜索历史
-          <i class="iconfont" @click="clear_history">&#xe618;</i>
+          <i class="iconfont" v-if="history!=''" @click="clear_history">&#xe618;</i>
         </div>
         <ul class="key_word">
           <li v-for="(item,i) of history" :key="i" v-text="item.pname" @click="find(item.pname)"></li>

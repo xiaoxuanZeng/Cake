@@ -1,5 +1,9 @@
 <template>
   <div class="page-navbar">
+    <div class="caption">
+      <i class="iconfont" @click="$router.go(-1)">&#xe732;</i>
+      <h1 class="caption-info">结算</h1>
+    </div>
     <mt-navbar class="page-part" v-model="selected">
       <mt-tab-item id="1">
         <span class="top_btn">同城配送</span>
@@ -78,7 +82,7 @@
           <mt-field label="备注："></mt-field>
         </div>
         <div class="product" v-for="(item,index) of list" :key="index">
-          <img :src="`http://127.0.0.1:7700/${item.pic}`" alt />
+          <img :src="`http://kirito7.applinzi.com/${item.pic}`" alt />
           <span class="product_title" v-text="item.pname"></span>
           <span class="product_details">
             <span :class="{none:item.is_state=='-1'}" v-text="`状态:\n${item.is_state}`"></span>
@@ -219,18 +223,37 @@ body {
 .none {
   display: none !important;
 }
-/* .page-navbar {
-} */
+.page-navbar {
+  margin-top: 10px;
+}
+/*头部*/
+.caption {
+  width: 100%;
+  /* padding: 0px 0 5px 0; */
+}
+.caption i.iconfont {
+  position: relative;
+  top: -3px;
+  float: left;
+  font-size: 28px;
+  text-indent: 0.26rem;
+  font-weight: bolder;
+}
+.caption-info {
+  font-size: 20px;
+  text-align: center;
+  margin-right: 0.63rem;
+}
 .page-part {
   border-bottom: 1px solid #ccc;
-  position: fixed;
-  top: 0;
+  position: relative;
+  /* top: 0px; */
   width: 100%;
   z-index: 1;
 }
 .box {
   margin-bottom: 55px;
-  margin-top: 50px;
+  margin-top: 0px;
 }
 .page-navbar .mint-tab-item-label {
   font-size: 16px;
