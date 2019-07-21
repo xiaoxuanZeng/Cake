@@ -89,13 +89,14 @@ CREATE TABLE cake_order(
   pay_time BIGINT,                                        #付款时间
   deliver_time BIGINT,                                    #发货时间
   received_time BIGINT                                    #签收时间
-)AUTO_INCREMENT=10000000;                                 #从10000000开始自增
-
+  pay_order AUTO_INCREMENT=10000000;                      #从10000000开始自增
+)
 /**用户订单**/
 CREATE TABLE cake_order_detail(
   did INT PRIMARY KEY AUTO_INCREMENT,
   order_id INT,                                           #订单编号
   product_id INT,                                         #产品编号
+  spec_id INT,                                            #商品规格id
   count INT                                               #购买数量
 );
 

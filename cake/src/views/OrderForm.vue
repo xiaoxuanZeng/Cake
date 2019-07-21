@@ -69,8 +69,19 @@ export default {
   data() {
     return {
       navTxts: txts,
-      options: 1
+      options: 1,
+      order_list:[]
     };
+  },
+  created(){
+    // 获取用户id
+    this.uid = this.$store.getters.getUserId;
+    if(this.uid){
+      // 获取该用户的所有订单信息
+      this.axios.get("/product/order_list",{params:{user_id:this.uid}}).then(result=>{
+        console.log(result)
+      })
+    }
   },
   methods: {
     scrollTo() {

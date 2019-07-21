@@ -82,7 +82,7 @@
           <mt-field label="备注："></mt-field>
         </div>
         <div class="product" v-for="(item,index) of list" :key="index">
-          <img :src="`http://kirito7.applinzi.com/${item.pic}`" alt />
+          <img :src="`http://127.0.0.1:7700/${item.pic}`" alt />
           <span class="product_title" v-text="item.pname"></span>
           <span class="product_details">
             <span :class="{none:item.is_state=='-1'}" v-text="`状态:\n${item.is_state}`"></span>
@@ -108,7 +108,7 @@
     </mt-tab-container>
     <div class="bottom">
       <span class="money">总计：¥268</span>
-      <label class="submit">提交订单</label>
+      <label class="submit" @click="submit_order">提交订单</label>
     </div>
   </div>
 </template>
@@ -119,33 +119,14 @@ export default {
       selected: "1",
       pickerValue: "",
       time: "",
-      list: [
-        {
-          pic: "images/product/64sd78f5465sda4110.jpg",
-          pname: "提拉米苏",
-          is_state: "-1",
-          size: "5寸",
-          fruit: "芒果",
-          else_message: null,
-          style: null,
-          count: 1,
-          price: 10
-        },
-        {
-          pic: "images/product/64sd78f5465sda4110.jpg",
-          pname: "提拉米苏",
-          is_state: "-1",
-          size: "5寸",
-          fruit: "芒果",
-          else_message: null,
-          style: null,
-          count: 1,
-          price: 10
-        }
-      ]
+      list: []
     };
   },
   created() {
+    if (this.$router.history.current.name == "Close") {
+      this.list = this.$router.history.current.query.data;
+    }
+    console.log(this.$router.history.current.query.data);
     var time = new Date();
     var year = time.getFullYear();
     var month = time.getMonth() + 1;
@@ -205,7 +186,27 @@ export default {
         selectedText[4] +
         ":" +
         selectedText[5];
-    }
+    },
+    // 点击提交
+    submit_order(){
+      // 遍历
+      for(var i of this.list){
+        console.log(i)
+        var pid=i.pid;
+        var cid=i.cid;
+        var count=i.count;
+        console.log(pid,cid,count)
+      }
+    /*   this.uid = this.$store.getters.getUserId;
+      var order_time=new Date().getTime()
+      console.log(order_time)
+      if(this.uid){
+        this.axios.get("/product/order",{params:{user_id:this.uid,order_time:order_time,status:1}}).then(result=>{
+          console.log(result)
+          this.$router.push("/OrderForm")
+        })
+      } */
+    },
     // cancelHandle() {
     //   this.$createToast({
     //     type: "correct",
@@ -213,6 +214,10 @@ export default {
     //     time: 1000
     //   }).show();
     // }
+  },
+  beforeRouteEnter(to, from, next) {
+    console.log(to);
+    next();
   }
 };
 </script>

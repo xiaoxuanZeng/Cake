@@ -12,6 +12,7 @@ import Search from './views/Search.vue'
 import ProductList from './views/ProductList.vue'
 import ResetPwd from './views/ResetPwd.vue'
 import OrderForm from './views/OrderForm.vue'
+import Save from './views/Save'
 
 Vue.use(Router)
 
@@ -97,6 +98,11 @@ export default new Router({
       path: '/OrderForm',
       name: 'OrderForm',
       component: OrderForm
+    },
+    {
+      path:'/Save',
+      name:"Save",
+      component:Save
     },
   ],
   // 滚动行为

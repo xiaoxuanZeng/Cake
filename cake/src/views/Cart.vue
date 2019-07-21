@@ -226,23 +226,32 @@ export default {
         });
     },
     toClose() {
+      var list = [];
       for (var item of this.list) {
         if (item.selected == true) {
-          this.$router.push("/Close");
-        } else {
-          this.$toast({
-            message: "请选中商品",
-            duration: 1000
-          });
+          list.push(item);
         }
+      }
+      if (list.length > 0) {
+        this.$router.push({
+          path: "/Close",
+          query: {
+            data: list
+          }
+        });
+      } else {
+        this.$toast({
+          message: "请选中商品",
+          duration: 1000
+        });
       }
     }
   },
-  watch: {
-    uid() {
-      this.load();
-    }
-  },
+  // watch: {
+  //   uid() {
+  //     this.load();
+  //   }
+  // },
   activated() {
     // keepAlive(缓存)开启时 重新刷新数据
     this.isSelectAll = false;

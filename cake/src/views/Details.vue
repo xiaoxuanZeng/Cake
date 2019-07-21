@@ -75,8 +75,8 @@
           <span @click="To('Index')">首页</span>
         </li>
         <li class="li-nav">
-          <label for="input"  @click="changeColor">
-          <i class="iconfont" style="i_actived">&#xe608;</i>
+          <label for="input">
+            <i class="iconfont" :class="{actived:isSelected}" @click="isChange">&#xe608;</i>
           </label>
           <span>收藏</span>
         </li>
@@ -133,9 +133,8 @@ export default {
   data() {
     // name:"Tabbar"
     return {
-      //改变收藏的颜色
-      i_actived:{color:""},
-      isActived: false,
+      //收藏更改颜色
+      isSelected: false,
       active: "tab1",
       list: {},
       // 显示规格
@@ -177,9 +176,40 @@ export default {
   },
   methods: {
     // 点击改变收藏的颜色
-    changeColor() {
-      console.log(111)
-      this.i_actived.color=this.i_actived.color==="red"?"":"red"
+    isChange() {
+      //获取登录的用户id
+      this.uid = this.$store.getters.getUserId;
+      if (this.uid) {
+        this.isSelected = !this.isSelected;
+      }else{
+        this.$toast("请先登录")
+      }
+      if (this.isSelected == true) {
+        // 选中收藏
+        console.log("选中");
+        if (this.uid) {
+          this.axios
+            .get("/product/save", {
+              params: { uid: this.uid, pid: this.pid, status: 1 }
+            })
+            .then(result => {
+              console.log(result);
+            });
+        } else {
+          // 没登录就给提示
+          this.$toast("请先登录");
+        }
+      } else {
+        // 取消收藏
+        console.log("未选中");
+        if (this.uid) {
+          this.axios
+            .get("/product/cancel", { params: { uid: this.uid,pid:this.pid} })
+            .then(result => {
+              console.log(result);
+            });
+        }
+      }
     },
     load() {
       this.axios
@@ -314,7 +344,7 @@ export default {
     // 点击出现选择规格
     Select(n) {
       var uid = this.$store.getters.getUserId;
-      if (uid != undefined) {
+      if (uid !="") {
         this.show_spec = true;
         var selectArr = this.selectArr;
         var shopItemInfo = this.shopItemInfo;
@@ -808,6 +838,6 @@ i {
   pointer-events: none;
 }
 .actived {
-  background: #ed143d;
+  color: #ed143d;
 }
 </style>
