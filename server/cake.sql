@@ -9,7 +9,7 @@ CREATE TABLE cake_user(
   uname VARCHAR(50),                                          #用户名
   phone VARCHAR(16),                                          #手机号(登陆的账号)
   upwd VARCHAR(32),                                           #登陆密码
-  avatar VARCHAR(128) DEFAULT "默认一张登陆后的头像",           #头像
+  avatar VARCHAR(128) DEFAULT "images/avatar/avatar.png",     #头像
   real_name VARCHAR(50),                                      #真实姓名
   birthday VARCHAR(32),                                              #生日日期
   integral INT DEFAULT 0,                                     #积分(默认开始为0)
@@ -79,25 +79,34 @@ CREATE TABLE cake_cart(
   count INT                                                #购买数量
 );
 
+/*收藏表*/
+CREATE TABLE user_save(
+  sid INT PRIMARY KEY AUTO_INCREMENT,
+  uid INT, #用户id
+  pid INT, #商品的id
+  status BOOLEAN #状态 1-收藏 0-取消收藏
+);
+
 /**用户订单**/
 CREATE TABLE cake_order(
-  oid INT PRIMARY KEY AUTO_INCREMENT,
-  user_id INT,                                            #用户编号
-  address_id INT,                                         #收货地址id
-  status INT,                                             #订单状态(1等待付款,2等待发货,3运输中,4已签收,5已取消)
-  order_time BIGINT,                                      #下单时间
-  pay_time BIGINT,                                        #付款时间
-  deliver_time BIGINT,                                    #发货时间
-  received_time BIGINT                                    #签收时间
-  pay_order AUTO_INCREMENT=10000000;                      #从10000000开始自增
-)
+oid INT PRIMARY KEY AUTO_INCREMENT,
+user_id INT,             #用户编号
+order_id BIGINT,        #订单编号
+address_id INT,         #收货地址id
+status INT,           #订单状态(1等待付款,2等待发货,3运输中,4已签收,5已取消)
+order_time BIGINT,   #下单时间
+pay_time BIGINT,     #付款时间
+deliver_time BIGINT,    #发货时间
+received_time BIGINT    #签收时间
+);
+
 /**用户订单**/
 CREATE TABLE cake_order_detail(
-  did INT PRIMARY KEY AUTO_INCREMENT,
-  order_id INT,                                           #订单编号
-  product_id INT,                                         #产品编号
-  spec_id INT,                                            #商品规格id
-  count INT                                               #购买数量
+did INT PRIMARY KEY AUTO_INCREMENT,
+order_id BIGINT, #订单编号
+product_id INT, #产品编号
+count INT, #购买数量
+difference INT  #商品规格
 );
 
 /**收货地址信息**/
@@ -131,14 +140,6 @@ uid INT, #用户id
 pname VARCHAR(128) #用户搜索的数据
 );
 
-/*收藏表*/
-CREATE TABLE user_save(
-  sid INT PRIMARY KEY AUTO_INCREMENT,
-  uid INT,                                                #用户id
-  pid INT,                                                #商品的id
-  status  BOOLEAN                                         #状态 1-收藏 0-取消收藏
-);
-
 
 /** 录入数据 **/
 
@@ -168,21 +169,21 @@ INSERT INTO cake_product VALUE
 (14,1,"抹茶白巧慕斯",188,"images/product/64sd78f5465sda4160.jpg",0,0,1563508406135,NULL,1),
 (15,1,"巧克力缤纷水果戚风",108,"images/product/64sd78f5465sda4164.jpg",0,0,1563508406136,NULL,1),
 (16,2,"紫米奶茶戚风",139,"images/product/64sd78f5465sda4144.jpg",0,0,1563508406137,NULL,0),
-(17,2,"春日花花(加高版)",168,"images/product/64sd78f5465sda4127.jpg",0,0,1563508406138,NULL,1),
+(17,2,"春日花花",168,"images/product/64sd78f5465sda4127.jpg",0,0,1563508406138,NULL,1),
 (18,2,"山海·榛子慕斯",198,"images/product/64sd78f5465sda4139.jpg",0,0,1563508406139,NULL,1),
-(19,2,"Pink Dream(加高款)",268,"images/product/64sd78f5465sda4123.jpg",0,300,1563508406140,NULL,1),
+(19,2,"Pink Dream",268,"images/product/1555665116_18809.jpg",0,300,1563508406140,NULL,1),
 (20,2,"树莓荔枝戚风",198,"images/product/64sd78f5465sda4140.jpg",0,0,1563508406141,NULL,1),
 (21,2,"芒果百香果戚风",198,"images/product/64sd78f5465sda4133.jpg",0,0,1563508406142,NULL,1),
 (22,2,"日和",468,"images/product/64sd78f5465sda4137.jpg",0,0,1563508406143,NULL,1),
 (23,2,"暴富",149,"images/product/64sd78f5465sda4126.jpg",0,0,1563508406144,NULL,1),
 (24,2,"茉莉千层",149,"images/product/64sd78f5465sda4136.jpg",0,0,1563508406145,NULL,1),
 (25,2,"雪天的树",108,"images/product/64sd78f5465sda4142.jpg",0,0,1563508406146,NULL,1),
-(26,2,"消夏小盹(加高版)",218,"images/product/64sd78f5465sda4141.jpg",0,0,1563508406147,NULL,1),
+(26,2,"消夏小盹",218,"images/product/64sd78f5465sda4141.jpg",0,0,1563508406147,NULL,1),
 (27,2,"加州花园",268,"images/product/64sd78f5465sda4131.jpg",0,0,1563508406148,NULL,1),
 (28,2,"蜜桃红茶戚风",158,"images/product/64sd78f5465sda4135.jpg",0,0,1563508406149,NULL,1),
-(29,2,"Cupcakes-春天",108,"images/product/64sd78f5465sda4122.jpg",0,260,1563508406150,NULL,1),
+(29,2,"Cupcakes-春天",108,"images/product/f23f47b29cd9813435cd59204b41088.png",0,260,1563508406150,NULL,1),
 (30,2,"花与爱丽丝",168,"images/product/64sd78f5465sda4130.jpg",0,0,1563508406151,NULL,1),
-(31,2,"班兰戚风",208,"images/product/64sd78f5465sda4125.jpg",0,0,1563508406152,NULL,1),
+(31,2,"班兰戚风",208,"images/product/1555580023_60484.jpg",0,0,1563508406152,NULL,1),
 (32,2,"芒果夏洛特",218,"images/product/64sd78f5465sda4134.jpg",0,0,1563508406153,NULL,1),
 (33,2,"日式红薯戚风",168,"images/product/64sd78f5465sda4138.jpg",0,0,1563508406154,NULL,1),
 (34,2,"栗子戚风",118,"images/product/64sd78f5465sda4132.jpg",0,0,1563508406155,NULL,1),
@@ -192,25 +193,25 @@ INSERT INTO cake_product VALUE
 (38,2,"纸杯蛋糕组合装",198,"images/product/64sd78f5465sda4143.jpg",0,0,1563508406159,NULL,1),
 (39,3,"红茶杏仁戚风",139,"images/product/64sd78f5465sda411.jpg",0,0,1563508406160,NULL,1),
 (40,3,"迷迭可可戚风",58,"images/product/64sd78f5465sda412.jpg",0,0,1563508406161,NULL,1),
-(41,4,"女王大人(加高版)",228,"images/product/64sd78f5465sda412.jpg",0,159,1563508406162,NULL,1),
+(41,4,"女王大人",228,"images/product/64sd78f5465sda412.jpg",0,159,1563508406162,NULL,1),
 (42,4,"桔梗",218,"images/product/64sd78f5465sda417.jpg",0,0,1563508406163,NULL,1),
 (43,4,"二人",188,"images/product/64sd78f5465sda417.jpg",0,0,1563508406164,NULL,1),
 (44,4,"领结",149,"images/product/64sd78f5465sda4113.jpg",0,0,1563508406165,NULL,1),
 (45,4,"圣诞树",139,"images/product/64sd78f5465sda4117.jpg",0,0,1563508406166,NULL,1),
 (46,4,"皇冠",198,"images/product/64sd78f5465sda416.jpg",0,0,1563508406167,NULL,1),
-(47,4,"春天里(加高版)",188,"images/product/64sd78f5465sda414.jpg",0,300,1563508406168,NULL,1),
-(48,4,"蓝灰(加高版)",188,"images/product/64sd78f5465sda4111.jpg",0,0,1563508406169,NULL,1),
+(47,4,"春天里",188,"images/product/64sd78f5465sda414.jpg",0,300,1563508406168,NULL,1),
+(48,4,"蓝灰",188,"images/product/64sd78f5465sda4111.jpg",0,0,1563508406169,NULL,1),
 (49,4,"水泥森林",139,"images/product/64sd78f5465sda4119.jpg",0,0,1563508406170,NULL,1),
 (50,4,"蓝粉皇冠",198,"images/product/64sd78f5465sda4110.jpg",0,0,1563508406171,NULL,1),
 (51,4,"独角兽世界",258,"images/product/64sd78f5465sda4182.jpg",0,0,1563508406172,NULL,1),
-(52,4,"爱心翅膀(加高款)",268,"images/product/64sd78f5465sda411.png",0,0,1563508406173,NULL,1),
+(52,4,"爱心翅膀",268,"images/product/64sd78f5465sda411.png",0,0,1563508406173,NULL,1),
 (53,4,"森林果实",218,"images/product/64sd78f5465sda4116.jpg",0,0,1563508406174,NULL,1),
 (54,4,"羽翼",239,"images/product/64sd78f5465sda4120.jpg",0,0,1563508406175,NULL,1),
 (55,4,"寿",239,"images/product/64sd78f5465sda4118.jpg",0,0,1563508406176,NULL,1),
 (56,4,"马里奥",158,"images/product/64sd78f5465sda4114.jpg",0,0,1563508406177,NULL,1),
 (57,4,"蓝色狂想",218,"images/product/64sd78f5465sda4112.jpg",0,0,1563508406178,NULL,1),
 (58,4,"绝地求生",188,"images/product/64sd78f5465sda419.jpg",0,200,1563508406179,NULL,1),
-(59,4,"绝地求生(加高版)",218,"images/product/64sd78f5465sda418.jpg",0,0,1563508406180,NULL,1),
+(59,4,"绝地求生",218,"images/product/64sd78f5465sda418.jpg",0,0,1563508406180,NULL,1),
 (60,7,"曲奇(200g)",48,"images/product/64sd78f5465sda4175.jpg",0,0,1563508406181,NULL,1),
 (61,7,"意大利饼干(400g)",78,"images/product/64sd78f5465sda41103.jpg",0,0,1563508406182,NULL,1),
 (62,7,"蛋黄酥(六枚装)",48,"images/product/64sd78f5465sda4121.jpg",0,0,1563508406183,NULL,1),
@@ -253,7 +254,7 @@ INSERT INTO cake_spec VALUE
 (NULL,3,"8寸",308,-1,NULL,NULL,NULL,97),
 (NULL,4,"6寸",188,-1,NULL,NULL,NULL,97),
 (NULL,4,"8寸",268,-1,NULL,NULL,NULL,97),
-(NULL,5,"5寸",188,-1,NULL,",芒果",NULL,97),
+(NULL,5,"5寸",188,-1,NULL,"芒果",NULL,97),
 (NULL,5,"8寸",318,-1,NULL,"芒果",NULL,97),
 (NULL,5,"5寸",188,-1,NULL,"香蕉",NULL,97),
 (NULL,5,"8寸",318,-1,NULL,"香蕉",NULL,97),
@@ -565,17 +566,17 @@ INSERT INTO cake_spec VALUE
 
 /** 商品家族(分类) **/
 INSERT INTO cake_catalogue VALUE
-(1,"蛋糕","经典系列","images/product/879375593206604148.png"),
-(2,"蛋糕","当季新款","images/product/721480323975524637.png"),
-(3,"蛋糕","MINI系列","images/product/100418312576620576.png"),
-(4,"蛋糕","成人系列","images/product/553101839320126689.png"),
-(5,"蛋糕","童真系列","images/product/346341527835211463.png"),
-(6,"蛋糕","多重蛋糕","images/product/586248160342478527.png"),
-(7,"小食","饼干小食","images/product/74618ae4cb9dff73e6ce0ebbbe7a42a_03.png"),
-(8,"甜点","当日甜点","images/product/de390c33630b9f49c7204fda085c863_03.png"),
-(9,"甜点","蛋糕卷","images/product/de390c33630b9f49c7204fda085c863_04.png"),
-(10,"礼盒","节日礼盒","images/product/471bbd1d3bcc449ee151e75ef6fd7eb_03.png"),
-(11,"生日配件","生日配件","images/product/617dc6d30e86337f5d56b0df4a86fc1_03.png"),
+(1,"蛋糕","经典系列","images/product/dc94b3804b4ad2a36495f41567fdd1c_48.png"),
+(2,"蛋糕","当季新款","images/product/dc94b3804b4ad2a36495f41567fdd1c_39.png"),
+(3,"蛋糕","MINI系列","images/product/dc94b3804b4ad2a36495f41567fdd1c_46.png"),
+(4,"蛋糕","成人系列","images/product/dc94b3804b4ad2a36495f41567fdd1c_37.png"),
+(5,"蛋糕","童真系列","images/product/dc94b3804b4ad2a36495f41567fdd1c_31.png"),
+(6,"蛋糕","多重蛋糕","images/product/dc94b3804b4ad2a36495f41567fdd1c_29.png"),
+(7,"小食","饼干小食","images/product/dc94b3804b4ad2a36495f41567fdd1c_21.png"),
+(8,"甜点","当日甜点","images/product/dc94b3804b4ad2a36495f41567fdd1c_14.png"),
+(9,"甜点","蛋糕卷","images/product/dc94b3804b4ad2a36495f41567fdd1c_22.png"),
+(10,"礼盒","节日礼盒","images/product/dc94b3804b4ad2a36495f41567fdd1c_45.png"),
+(11,"生日配件","生日配件","images/product/shr222.jpg"),
 (12,"积分换购","NULL","images/product/9949ccc6037a03283d42fbbcf505c33_03.png"),
 (13,"甜品台布置","NULL","images/product/9949ccc6037a03283d42fbbcf505c33_03.png"),
 (14,"周末半价日","周末半价","images/product/576f44d79e2f55c1b814415e3a79d48_03.png");

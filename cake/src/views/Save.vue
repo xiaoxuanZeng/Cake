@@ -1,13 +1,13 @@
 <template>
   <div>
     <div class="caption">
-      <i class="iconfont" @click="$router.push('/Own')">&#xe732;</i>
+      <i class="iconfont" @click="$router.go(-1)">&#xe732;</i>
       <h1 class="caption-info">我的收藏</h1>
     </div>
     <div class="proList">
       <div class="pro-item" v-for="(item,i) of save_list" :key="i">
         <router-link :to="`/Details/${item.pid}`" style="position:relative;">
-          <img :src="`http://127.0.0.1:7700/${item.pic}`" alt />
+          <img :src="`http://127.0.0.1:5050/${item.pic}`" alt />
           <h4 class="pName" v-text="item.pname"></h4>
           <span class="price" v-text="`￥${item.price}`"></span>
         </router-link>
@@ -24,14 +24,18 @@ export default {
   },
   props: ["pid"],
   created() {
-    //获取登录的用户id
-    this.uid = this.$store.getters.getUserId;
-    this.axios
-      .get("/product/save_list", { params: { uid: this.uid } })
-      .then(result => {
-        this.save_list = result.data;
-        console.log((this.save_list = result.data));
-      });
+    this.axios.get("/user/save_list").then(result => {
+      this.save_list = result.data;
+      // console.log(result.data);
+    });
+  },
+  beforeRouteEnter(to, from, next) {
+    // 没有登录就跳到登录页面
+    next(vm => {
+      if (!vm.$store.getters.getIslogin) {
+        vm.$router.push("/Login");
+      }
+    });
   }
 };
 </script>

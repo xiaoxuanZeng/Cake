@@ -1,17 +1,17 @@
 <template>
   <div class="total" v-cloak>
     <!-- 未登录状态下 -->
-    <div class="not_login" v-if="$store.getters.getUserId==''">
+    <div class="not_login" v-if="!$store.getters.getIslogin">
       <div class="logo">
         <img src="../../public/images/avatar.png" alt />
       </div>
       <mt-button class="myButton" @click="login">登录</mt-button>
     </div>
     <!-- 登录状态下 -->
-    <div class="is_login" v-if="$store.getters.getUserId!=''" v-cloak>
+    <div class="is_login" v-if="$store.getters.getIslogin" v-cloak>
       <div class="avatar_wrap">
         <router-link to="Infornation" class="logo">
-          <img src="../../public/images/avatar.png" alt />
+          <img :src="pic" alt />
         </router-link>
       </div>
       <div class="info">
@@ -23,19 +23,19 @@
     <div class="order">
       <div class="own">
         <p class="section_title">我的订单</p>
-        <a href="/OrderForm">待付款</a>
-        <a href="/OrderForm">待发货</a>
-        <a href="/OrderForm">待收获</a>
-        <a href="/OrderForm">我的订单</a>
+        <router-link to="/OrderForm">待付款</router-link>
+        <router-link to="/OrderForm">待发货</router-link>
+        <router-link to="/OrderForm">待收货</router-link>
+        <router-link to="/OrderForm">待评价</router-link>
       </div>
     </div>
     <div class="service">
       <div class="own">
         <p class="section_title">我的服务</p>
         <a href="javascript:;" class="birth">生日助手</a>
-        <a href="javascript:;" class="detail">个人资料</a>
+        <router-link to="/Infornation" class="detail">个人资料</router-link>
         <a href="javascript:;" class="card">储值卡专享兑换券</a>
-        <a href="javascript:;" class="leclub">LECLUB</a>
+        <router-link to="/Save" class="shoucang">我的收藏</router-link>
         <a href="javascript:;" class="online">在线客服</a>
         <a href="javascript:;" class="ticket">我的发票</a>
         <a href="javascript:;" class="our">关于我们</a>
@@ -47,7 +47,8 @@
 export default {
   data() {
     return {
-      uphone: ""
+      uphone: "",
+      pic: "images/avatar/avatar.png"
     };
   },
   created() {
@@ -55,16 +56,13 @@ export default {
   },
   methods: {
     load() {
-      this.$store.commit("setUserId");
-      var uid = this.$store.getters.getUserId;
-      if (uid) {
-        this.axios.post("/user/own", `uid=${uid}`).then(result => {
-          // console.log(result.data)
-          if (result.data.code != 400) {
-            this.uphone = result.data.data[0].phone;
-          }
-        });
-      }
+      this.axios.post("/user/own").then(result => {
+        // console.log(result.data);
+        if (result.data.code == 200) {
+          this.pic = `http://127.0.0.1:5050/${result.data.data[0].avatar}`;
+          this.uphone = result.data.data[0].phone;
+        }
+      });
     },
     login() {
       // 跳转到登陆页
@@ -73,9 +71,9 @@ export default {
     // 退出登录
     logout() {
       this.$messagebox("", "是否退出登录").then(action => {
-        // sessionStorage.clear("uid");
         this.uphone = "";
-        this.$store.commit("delUserId");
+        this.$store.commit("setIslogin", false);
+        sessionStorage.removeItem("token");
         this.$router.push("/Login");
       });
     }
@@ -83,8 +81,10 @@ export default {
   activated() {
     // keepAlive(缓存)开启时 重新刷新数据
     this.load();
-  },
-  watch: {}
+    if (this.$router.history.current.query.imgSrc != null) {
+      this.pic = this.$router.history.current.query.imgSrc;
+    }
+  }
 };
 </script>
 <style scoped>
@@ -93,8 +93,9 @@ export default {
 }
 .total {
   background: #f5f5f5;
-  position: fixed;
+  /* position: fixed; */
   top: -2%;
+  background-image: url("../../public/images/bcfa076fd26e7285e70c848ef0fb1a0.jpg");
 }
 .not_login {
   text-align: center;
@@ -113,6 +114,7 @@ export default {
   margin-top: 26%;
   width: 65px;
   height: 65px;
+  object-fit: cover;
 }
 .myButton {
   width: 80px;
@@ -156,64 +158,61 @@ export default {
   text-align: center;
   margin: 10px 0;
   color: #000;
-  padding-top: 40px;
+  padding-top: 30px;
 }
 .own a::before {
   content: "";
   position: absolute;
   width: 1.2rem;
   height: 1.2rem;
-  background: url(../../public/images/icons.png) no-repeat center;
-  -webkit-background-size: 2rem 2rem;
-  background-size: 6rem 6rem;
-  top: 50%;
-  margin-top: -0.2rem;
-  left: 50%;
-  margin-left: -0.4rem;
-  top: 0.24rem;
+  background: url(../../public/images/20190723190115.png) no-repeat center;
+  background-size: 10rem 10rem;
+  top: -25%;
+  left: 24%;
 }
 .own a:nth-of-type(1):before {
-  background-position: -0.213333rem -0.08rem;
+  background-position: -15px -56px;
 }
 .own a:nth-of-type(2):before {
-  background-position: -1.36rem -0.08rem;
+  background-position: -71px -56px;
 }
 .own a:nth-of-type(3):before {
-  background-position: -2.586667rem -0.08rem;
+  background-position: -128px -56px;
 }
 .own a:nth-of-type(4):before {
-  background-position: -3.813333rem -0.08rem;
+  background-position: -183px -56px;
 }
 .own a.birth:before {
-  background-position: -5.013333rem -0.08rem;
+  background-position: -17px -109px;
 }
 .own a.detail:before {
-  background-position: -2.5rem, 4.1rem;
+  background-position: -72px -109px;
 }
 .own a.card:before {
-  background-position: -0.12rem -1.23rem;
+  background-position: -127px -109px;
 }
 .own a.our:before {
-  background-position: -1rem, 0rem;
+  background-position: -29px -109px;
 }
-.own a.leclub:before {
-  background-position: -1.32rem -1.24rem;
+.own a.shoucang:before {
+  background-position: -15px -163px;
 }
 .own a.online:before {
-  background-position: -3.9rem -1.24rem;
+  background-position: -183px -109px;
 }
 .own a.ticket:before {
-  background-position: -4.9rem -1.24rem;
+  background-position: -240px -109px;
 }
 .own a.our:before {
-  background-position: -1.3rem -2.4rem;
+  background-position: -298px -109px;
 }
 .is_login {
   overflow: hidden;
   clear: both;
-  margin-top: 20px;
-  margin-left: 20px;
-  margin-bottom: 5%;
+  padding-top: 20px;
+  padding-left: 20px;
+  padding-bottom: 5%;
+  /* background-image: url("../../public/images/bcfa076fd26e7285e70c848ef0fb1a0.jpg"); */
 }
 .avatar_wrap {
   float: left;
